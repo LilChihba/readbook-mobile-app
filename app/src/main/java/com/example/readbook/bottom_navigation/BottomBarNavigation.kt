@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
@@ -28,6 +29,17 @@ import com.example.readbook.ui.theme.DarkGray
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BottomBarNavigation() {
+    /* Style bottomBarNavigation */
+    val fontSize = 14.sp
+    val fontFamily = FontFamily(
+        Font(R.font.arial, weight = FontWeight.Normal)
+    )
+    val iconSize = 32.dp
+    val unselectedColor = Color.White
+    val selectedColor = Blue
+    val containerColor = DarkGray
+    /*****************************/
+
     val tabItems = listOf(
         "Главная",
         "Избранное",
@@ -38,13 +50,9 @@ fun BottomBarNavigation() {
     var selectedItem = remember { mutableStateOf(0)}
     val navController = rememberNavController()
 
-    val iconSize = 32.dp
-    val unselectedColor = Color.White
-    val selectedColor = Blue
-
     Scaffold(bottomBar = {
         NavigationBar(
-            containerColor = DarkGray,
+            containerColor = containerColor,
         ) {
             tabItems.forEachIndexed { index, item ->
                 NavigationBarItem(
@@ -60,7 +68,7 @@ fun BottomBarNavigation() {
                            "Профиль" -> Icon(painter = painterResource(id = R.drawable.profile), contentDescription = null, modifier = Modifier.size(iconSize))
                         }
                     },
-                    label = { Text(text = item, fontSize = 14.sp)},
+                    label = { Text(text = item, fontSize = fontSize, fontFamily = fontFamily)},
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = selectedColor,
                         selectedTextColor = selectedColor,
