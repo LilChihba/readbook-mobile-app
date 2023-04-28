@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.Readbook" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="SplashTheme.Launcher" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+        <item name="android:navigationBarColor">@color/milk</item>
+        <item name="android:statusBarColor">@color/milk</item>
+    </style>
 </resources>
