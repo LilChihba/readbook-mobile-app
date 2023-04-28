@@ -13,12 +13,7 @@
         android:theme="@style/Theme.Readbook"
         tools:targetApi="31">
         <activity
-            android:name=".MenuBar"
-            android:exported="false"
-            android:label="@string/title_activity_menu_bar"
-            android:theme="@style/Theme.Readbook" />
-        <activity
-            android:name=".HomeActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Readbook">
