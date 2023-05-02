@@ -1,3 +1,5 @@
+package com.example.readbook.pages
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,16 +23,66 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.readbook.R
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.Milk
 
-@Preview
 @Composable
-fun ProfilePage() {
+fun ProfileNavHost() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Route.profilePage
+    ) {
+        composable(route = Route.profilePage) {
+            ProfilePage(
+                navigateToSettingsPage = { navController.navigate(Route.settingsPage) },
+                navigateToAuthPage = { navController.navigate(Route.authPage) }
+            )
+        }
+
+        composable(route = Route.settingsPage) {
+            SettingsPage(
+                navigateToAuthPage = { /*TODO*/ },
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(route = Route.authPage) {
+            AuthPage(
+                navigateToRegPage = { navController.navigate(Route.regPage) },
+                navigateBack = { navController.popBackStack() },
+                navigateBackToProfile = { navController.popBackStack(
+                    route = Route.profilePage,
+                    inclusive = false
+                ) }
+            )
+        }
+
+        composable(route = Route.regPage) {
+            RegPage(
+                navigateBack = { navController.popBackStack() },
+                navigateBackToProfile = { navController.popBackStack(
+                    route = Route.profilePage,
+                    inclusive = false
+                ) }
+            )
+        }
+    }
+}
+
+@Composable
+fun ProfilePage(
+    navigateToSettingsPage: () -> Unit,
+    navigateToAuthPage: () -> Unit
+) {
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Milk)
@@ -40,7 +92,7 @@ fun ProfilePage() {
             horizontalArrangement = Arrangement.End
         ) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navigateToSettingsPage() },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
             ) {
                 Icon(
@@ -77,7 +129,7 @@ fun ProfilePage() {
                 )
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navigateToAuthPage() },
                     colors = ButtonDefaults.buttonColors(containerColor = Blue),
                     modifier = Modifier
                         .padding(top = 10.dp)

@@ -1,13 +1,13 @@
 package com.example.readbook
 
 import FavoritePage
-import ProfilePage
 import SearchPage
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.readbook.pages.HomePage
+import com.example.readbook.pages.ProfileNavHost
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
@@ -25,7 +25,7 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("profile_page"){
-            ProfilePage()
+            ProfileNavHost()
         }
     }
 }
