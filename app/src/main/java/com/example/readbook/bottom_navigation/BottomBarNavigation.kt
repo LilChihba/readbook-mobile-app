@@ -12,14 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.readbook.R
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.DarkGray
 
@@ -28,9 +24,6 @@ import com.example.readbook.ui.theme.DarkGray
 fun BottomBarNavigation(navController: NavController) {
     /* Style bottomBarNavigation */
     val fontSize = 14.sp
-    val fontFamily = FontFamily(
-        Font(R.font.arial, weight = FontWeight.Normal)
-    )
     val iconSize = 32.dp
     val unselectedColor = Color.White
     val selectedColor = Blue
@@ -45,7 +38,7 @@ fun BottomBarNavigation(navController: NavController) {
     )
 
     NavigationBar(
-        containerColor = containerColor,
+        containerColor = containerColor
     ) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
@@ -66,7 +59,6 @@ fun BottomBarNavigation(navController: NavController) {
                     Text(
                         text = item.title,
                         fontSize = fontSize,
-                        fontFamily = fontFamily
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
