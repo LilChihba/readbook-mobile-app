@@ -3,5 +3,5 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun SearchPage() {
-    Text(text = "3")
+    Text(text = "SearchPage")
 }

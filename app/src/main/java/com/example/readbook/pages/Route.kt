@@ -5,4 +5,5 @@ object Route {
     const val settingsPage = "settingPage"
     const val authPage = "authPage"
     const val regPage = "regPage"
+    const val forgotPassPage = "forgotPassPage"
 }

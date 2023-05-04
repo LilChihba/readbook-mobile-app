@@ -62,12 +62,23 @@ fun ProfileNavHost() {
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
                     inclusive = false
-                ) }
+                ) },
+                navigateToForgotPassPage = { navController.navigate(Route.forgotPassPage) }
             )
         }
 
         composable(route = Route.regPage) {
             RegPage(
+                navigateBack = { navController.popBackStack() },
+                navigateBackToProfile = { navController.popBackStack(
+                    route = Route.profilePage,
+                    inclusive = false
+                ) }
+            )
+        }
+
+        composable(route = Route.forgotPassPage) {
+            ForgotPassPage(
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
@@ -134,6 +145,7 @@ fun ProfilePage(
                 Button(
                     onClick = { navigateToAuthPage() },
                     colors = ButtonDefaults.buttonColors(containerColor = Blue),
+                    shape = RoundedCornerShape(5.dp),
                     modifier = Modifier
                         .padding(top = 10.dp)
                         .height(45.dp)

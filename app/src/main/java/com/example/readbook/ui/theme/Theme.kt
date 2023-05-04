@@ -16,15 +16,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Milk,
+    primary = Blue,
     secondary = DarkGray,
-    tertiary = Pink80
+    tertiary = Milk
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Milk,
+    primary = Blue,
     secondary = DarkGray,
-    tertiary = Pink40
+    tertiary = Milk
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -57,7 +57,7 @@ fun ReadbookTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.tertiary.toArgb()
             window.navigationBarColor = colorScheme.secondary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }

@@ -4,6 +4,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun HomePage() {
-    Text(text = "HomePage")
+fun ForgotPassPage(
+    navigateBack: () -> Unit,
+    navigateBackToProfile: () -> Unit,
+) {
+    Text(text = "ForgotPassPage")
 }
