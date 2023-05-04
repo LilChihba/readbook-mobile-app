@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -49,7 +50,7 @@ fun ProfileNavHost() {
 
         composable(route = Route.settingsPage) {
             SettingsPage(
-                navigateToAuthPage = { /*TODO*/ },
+                navigateToAuthPage = { navController.navigate(Route.authPage) },
                 navigateBack = { navController.popBackStack() }
             )
         }
@@ -115,9 +116,11 @@ fun ProfilePage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.avatar_male),
+                    painter = painterResource(id = R.drawable.selfy),
                     contentDescription = "Avatar",
-                    modifier = Modifier.clip(RoundedCornerShape(10.dp))
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .size(250.dp)
                 )
 
                 Text(
