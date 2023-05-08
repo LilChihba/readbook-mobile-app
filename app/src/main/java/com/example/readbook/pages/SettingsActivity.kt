@@ -56,7 +56,7 @@ fun SettingsPage(
         ) {
             Row(modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 45.dp, top = 10.dp)
+                .padding(start = 25.dp, top = 10.dp)
             ) {
                 Text(
                     text = "Настройки",
@@ -67,7 +67,7 @@ fun SettingsPage(
             }
 
             Column(modifier = Modifier
-                .padding(start = 45.dp, top = 15.dp)
+                .padding(start = 25.dp, top = 15.dp, end = 25.dp)
                 .fillMaxHeight()
                 .fillMaxWidth()
             ) {
@@ -77,7 +77,6 @@ fun SettingsPage(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = 45.dp)
                 ) {
                     Text(
                         text = "Учётная запись",
@@ -106,7 +105,7 @@ fun SettingsPage(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 25.dp, end = 45.dp)
+                        .padding(top = 25.dp)
                 ) {
                     Text(
                         text = "О приложении",
