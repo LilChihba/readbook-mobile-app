@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.readbook.R
 import com.example.readbook.ui.theme.Blue
+import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 
 @Composable
@@ -83,7 +82,30 @@ fun ProfileNavHost() {
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
                     inclusive = false
-                ) }
+                ) },
+                navigateToCodePage = { navController.navigate(Route.forgotPassPage_Code)}
+            )
+        }
+
+        composable(route = Route.forgotPassPage_Code) {
+            ForgotPassPage_Code(
+                navigateBack = { navController.popBackStack() },
+                navigateBackToProfile = { navController.popBackStack(
+                    route = Route.profilePage,
+                    inclusive = false
+                ) },
+                navigateToChangePassPage = { navController.navigate(Route.forgotPassPage_ChangePass)}
+            )
+        }
+
+        composable(route = Route.forgotPassPage_ChangePass) {
+            ForgotPassPage_ChangePass(
+                navigateBack = { navController.popBackStack() },
+                navigateBackToProfile = { navController.popBackStack(
+                    route = Route.profilePage,
+                    inclusive = false
+                ) },
+                navigateToAuthPage = { navController.navigate(Route.authPage)}
             )
         }
     }
@@ -123,7 +145,9 @@ fun ProfilePage(
         }
         Row(modifier = Modifier.padding(top = 15.dp)) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 45.dp, top = 10.dp, end = 45.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
@@ -142,20 +166,7 @@ fun ProfilePage(
                     modifier = Modifier.padding(top = 15.dp)
                 )
 
-                Button(
-                    onClick = { navigateToAuthPage() },
-                    colors = ButtonDefaults.buttonColors(containerColor = Blue),
-                    shape = RoundedCornerShape(5.dp),
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(45.dp)
-                        .width(275.dp)
-                ) {
-                    Text(
-                        text = "Вход или регистрация",
-                        fontSize = 17.sp
-                    )
-                }
+                ButtonApp(text = "Вход или регистрация", navigate = navigateToAuthPage)
             }
         }
     }
