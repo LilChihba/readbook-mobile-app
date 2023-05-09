@@ -2,30 +2,25 @@ package com.example.readbook.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readbook.R
-import com.example.readbook.ui.theme.Blue
+import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
+import com.example.readbook.ui.theme.PassBox
+import com.example.readbook.ui.theme.TextBox
+import com.example.readbook.ui.theme.TextForField
+import com.example.readbook.ui.theme.TopNavigationBar
 
 @Composable
 fun RegPage(
@@ -40,32 +35,10 @@ fun RegPage(
             .fillMaxSize()
             .background(Milk)
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Button(
-                onClick = { navigateBack()},
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow_back),
-                    contentDescription = "back",
-                    tint = Blue
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { navigateBackToProfile() },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.close),
-                    contentDescription = "close",
-                    tint = Blue
-                )
-            }
-        }
+        TopNavigationBar(
+            navigateBack = navigateBack,
+            navigateBackToProfile = navigateBackToProfile
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -89,23 +62,9 @@ fun RegPage(
                 TextBox(text = textEmail)
 
                 TextForField(text = "Пароль")
-                TextBox(text = textPassword)
+                PassBox(textPass = textPassword)
 
-                Button(
-                    onClick = { /* TODO */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Blue),
-                    shape = RoundedCornerShape(7.dp),
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(50.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Зарегистрироваться",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
+                ButtonApp(text = "Зарегистрироваться", navigate = { /* TODO */ })
             }
         }
     }

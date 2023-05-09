@@ -6,4 +6,6 @@ object Route {
     const val authPage = "authPage"
     const val regPage = "regPage"
     const val forgotPassPage = "forgotPassPage"
+    const val forgotPassPage_Code = "codePage"
+    const val forgotPassPage_ChangePass = "changePassPage"
 }
