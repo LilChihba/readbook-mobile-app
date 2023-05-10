@@ -1,6 +1,7 @@
 package com.example.readbook.bottom_navigation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -22,14 +23,6 @@ import com.example.readbook.ui.theme.DarkGray
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BottomBarNavigation(navController: NavController) {
-    /* Style bottomBarNavigation */
-    val fontSize = 14.sp
-    val iconSize = 32.dp
-    val unselectedColor = Color.White
-    val selectedColor = Blue
-    val containerColor = DarkGray
-    /*****************************/
-
     val listItems = listOf(
         BottomItem.Home,
         BottomItem.Favorite,
@@ -38,7 +31,8 @@ fun BottomBarNavigation(navController: NavController) {
     )
 
     NavigationBar(
-        containerColor = containerColor
+        containerColor = DarkGray,
+        modifier = Modifier.height(75.dp)
     ) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
@@ -52,21 +46,21 @@ fun BottomBarNavigation(navController: NavController) {
                     Icon(
                         painter = painterResource(id = item.iconId),
                         contentDescription = "Icon",
-                        modifier = Modifier.size(iconSize)
+                        modifier = Modifier.size(28.dp)
                     )
                 },
                 label = {
                     Text(
                         text = item.title,
-                        fontSize = fontSize,
+                        fontSize = 14.sp,
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = selectedColor,
-                    selectedTextColor = selectedColor,
+                    selectedIconColor = Blue,
+                    selectedTextColor = Blue,
                     indicatorColor = DarkGray,
-                    unselectedIconColor = unselectedColor,
-                    unselectedTextColor = unselectedColor
+                    unselectedIconColor = Color.White,
+                    unselectedTextColor = Color.White
                 )
             )
         }
