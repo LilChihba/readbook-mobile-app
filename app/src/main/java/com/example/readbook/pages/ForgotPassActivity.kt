@@ -1,6 +1,8 @@
 package com.example.readbook.pages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +13,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,6 +29,7 @@ import com.example.readbook.ui.theme.TopNavigationBar
 
 var textEmail: MutableState<String> = mutableStateOf("")
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage(
     navigateBack: () -> Unit,
@@ -32,11 +37,16 @@ fun ForgotPassPage(
     navigateToCodePage: () -> Unit
 ) {
     textEmail = remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Milk)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { keyboardController?.hide() }
     ) {
         TopNavigationBar(
             navigateBack = navigateBack,
@@ -72,6 +82,7 @@ fun ForgotPassPage(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage_Code(
     navigateBack: () -> Unit,
@@ -79,11 +90,16 @@ fun ForgotPassPage_Code(
     navigateToChangePassPage: () -> Unit
 ) {
     val textCode = remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Milk)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { keyboardController?.hide() }
     ) {
         TopNavigationBar(
             navigateBack = navigateBack,
@@ -119,6 +135,7 @@ fun ForgotPassPage_Code(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage_ChangePass(
     navigateBack: () -> Unit,
@@ -127,11 +144,16 @@ fun ForgotPassPage_ChangePass(
 ) {
     val textPass = rememberSaveable { mutableStateOf("") }
     val repeatTextPass = rememberSaveable { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Milk)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { keyboardController?.hide() }
     ) {
         TopNavigationBar(
             navigateBack = navigateBack,
