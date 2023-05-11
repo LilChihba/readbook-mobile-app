@@ -1,6 +1,8 @@
 package com.example.readbook.pages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,6 +26,7 @@ import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RegPage(
     navigateBack: () -> Unit,
@@ -29,11 +34,16 @@ fun RegPage(
 ) {
     val textEmail = remember{ mutableStateOf("") }
     val textPassword = remember{ mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Milk)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { keyboardController?.hide() }
     ) {
         TopNavigationBar(
             navigateBack = navigateBack,
