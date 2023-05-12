@@ -3,7 +3,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -42,7 +41,7 @@ fun FavoritePage() {
             colors = CardDefaults.cardColors(containerColor = Gray),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(610.dp)
+                .padding(bottom = 20.dp)
         ) {
             LazyColumn() {
                 items(count = 50) {
