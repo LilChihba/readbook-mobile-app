@@ -3,6 +3,7 @@ package com.example.readbook.ui.theme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,63 +17,68 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
 import com.example.readbook.models.Review
-import com.example.readbook.repository.ReviewProvider
 
-@Preview
+
 @Composable
 fun BookReview(
-    @PreviewParameter(ReviewProvider::class) review: Review
+    review: Review
 ) {
-    Column() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 20.dp)
+    ) {
         Row() {
             Image(
                 painter = painterResource(id = R.drawable.avatar_male),
                 contentDescription = "avatar",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(40.dp)
                     .clip(CircleShape)
             )
 
             Text(
                 text = review.nickname,
                 color = Color.Black,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(start = 10.dp, top = 3.dp)
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp)
             )
         }
         Row(
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 5.dp)
         ) {
             RatingBar(
                 rating = review.rating,
                 modifier = Modifier
-                    .width(10.dp)
-                    .height(10.dp)
+                    .width(18.dp)
+                    .height(18.dp)
             )
             Text(
                 text = review.date,
-                fontSize = 7.sp,
+                fontSize = 10.sp,
                 color = Blue,
                 modifier = Modifier
-                    .padding(start = 3.dp, bottom = 5.dp)
+                    .padding(start = 5.dp, top = 2.dp)
             )
         }
-        Row {
+        Row(
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+        ) {
             Text(
                 text = review.content,
                 textAlign = TextAlign.Left,
                 color = DarkGray,
-                fontSize = 10.sp,
-                modifier = Modifier
-                    .padding(bottom = 5.dp)
+                fontSize = 14.sp
             )
         }
         Row(
