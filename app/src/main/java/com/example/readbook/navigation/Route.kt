@@ -1,4 +1,4 @@
-package com.example.readbook.pages
+package com.example.readbook.navigation
 
 object Route {
     const val profilePage = "profilePage"
@@ -8,4 +8,8 @@ object Route {
     const val forgotPassPage = "forgotPassPage"
     const val forgotPassPage_Code = "codePage"
     const val forgotPassPage_ChangePass = "changePassPage"
+    const val homePage = "homePage"
+    const val mybookPage = "mybookPage"
+    const val searchPage = "searchPage"
+    const val bookPage = "bookPage"
 }

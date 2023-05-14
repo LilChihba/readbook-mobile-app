@@ -17,11 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readbook.pages.CardItem
+import com.example.readbook.models.CardItem
 
 @Composable
 fun CategoryCard(
-    card: CardItem
+    card: CardItem,
+    navigateToBook: () -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -61,7 +62,7 @@ fun CategoryCard(
             ) {
                 LazyRow() {
                     items(card.books) { book ->
-                        ButtonBookCategory(book = book)
+                        ButtonBookCategory(book = book, navigateToBook = navigateToBook)
                     }
                 }
             }

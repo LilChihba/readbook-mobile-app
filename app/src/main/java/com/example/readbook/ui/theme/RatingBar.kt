@@ -13,18 +13,18 @@ import com.example.readbook.R
 
 @Composable
 fun RatingBar(
-    rating: Int
+    rating: Int,
+    modifier: Modifier = Modifier
 ) {
-
     Row() {
         for(i in 1..5) {
             Icon(
                 painter = painterResource(id = R.drawable.star),
                 contentDescription = "star",
-                modifier = Modifier
+                modifier = modifier
                     .width(16.dp)
                     .height(16.dp),
-                tint = if(rating < i) Color.LightGray else Orange
+                tint = if(rating < i) Color.LightGray else Blue
             )
         }
 

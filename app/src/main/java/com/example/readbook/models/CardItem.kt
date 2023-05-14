@@ -1,4 +1,4 @@
-package com.example.readbook.pages
+package com.example.readbook.models
 
 import com.example.readbook.R
 

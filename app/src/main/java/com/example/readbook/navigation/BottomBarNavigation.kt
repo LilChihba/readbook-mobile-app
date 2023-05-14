@@ -1,4 +1,4 @@
-package com.example.readbook.bottom_navigation
+package com.example.readbook.navigation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.height
@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.readbook.models.BottomItem
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.DarkGray
 

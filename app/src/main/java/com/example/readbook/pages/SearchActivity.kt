@@ -1,3 +1,5 @@
+package com.example.readbook.pages
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,16 +23,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.readbook.pages.GenreItem
+import com.example.readbook.models.GenreItem
 import com.example.readbook.ui.theme.GenreCard
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.SearchBox
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun SearchPage() {
     val textSearch = remember{ mutableStateOf("") }

@@ -1,18 +1,38 @@
-package com.example.readbook.pages
+package com.example.readbook.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.example.readbook.pages.AuthPage
+import com.example.readbook.pages.BookPage
+import com.example.readbook.pages.FavoritePage
+import com.example.readbook.pages.ForgotPassPage
+import com.example.readbook.pages.ForgotPassPage_ChangePass
+import com.example.readbook.pages.ForgotPassPage_Code
+import com.example.readbook.pages.HomePage
+import com.example.readbook.pages.ProfilePage
+import com.example.readbook.pages.RegPage
+import com.example.readbook.pages.SearchPage
+import com.example.readbook.pages.SettingsPage
 
 @Composable
-fun ProfileNavHost() {
-    val navController = rememberNavController()
+fun NavGraph(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = Route.homePage) {
+        composable(Route.homePage){
+            HomePage(
+                navigateToBook = { navController.navigate(Route.bookPage) }
+            )
+        }
 
-    NavHost(
-        navController = navController,
-        startDestination = Route.profilePage
-    ) {
+        composable(Route.mybookPage){
+            FavoritePage()
+        }
+
+        composable(Route.searchPage){
+            SearchPage()
+        }
+
         composable(route = Route.profilePage) {
             ProfilePage(
                 navigateToSettingsPage = { navController.navigate(Route.settingsPage) },
@@ -79,6 +99,12 @@ fun ProfileNavHost() {
                     inclusive = false
                 ) },
                 navigateToAuthPage = { navController.navigate(Route.authPage)}
+            )
+        }
+
+        composable(route = Route.bookPage) {
+            BookPage(
+                navigateBack = { navController.popBackStack() }
             )
         }
     }

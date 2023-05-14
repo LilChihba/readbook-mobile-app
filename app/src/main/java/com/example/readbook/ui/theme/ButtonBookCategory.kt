@@ -18,17 +18,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readbook.pages.BookItem
+import com.example.readbook.models.BookItem
 
 @Composable
 fun ButtonBookCategory(
-    book: BookItem
+    book: BookItem,
+    navigateToBook: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(start = 10.dp, end = 15.dp)
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { navigateToBook() },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             contentPadding = PaddingValues(0.dp),
             shape = RoundedCornerShape(5.dp),
@@ -48,7 +49,7 @@ fun ButtonBookCategory(
         Column(
             modifier = Modifier.padding(top = 7.dp)
         ) {
-            RatingBar(rating = book.rate)
+            RatingBar(rating = book.rate.toInt())
             Text(
                 text = book.title,
                 color = Color.Black,

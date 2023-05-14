@@ -1,6 +1,7 @@
+package com.example.readbook.pages
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,15 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.ui.theme.ButtonBook
 import com.example.readbook.ui.theme.Gray
 import com.example.readbook.ui.theme.Milk
 
-@OptIn(ExperimentalLayoutApi::class)
-@Preview
 @Composable
 fun FavoritePage() {
     Column(modifier = Modifier
