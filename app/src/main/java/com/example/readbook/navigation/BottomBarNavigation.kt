@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.readbook.models.BottomItem
+import com.example.readbook.models.BottomNavItem
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.DarkGray
 
@@ -25,10 +25,10 @@ import com.example.readbook.ui.theme.DarkGray
 @Composable
 fun BottomBarNavigation(navController: NavController) {
     val listItems = listOf(
-        BottomItem.Home,
-        BottomItem.Favorite,
-        BottomItem.Search,
-        BottomItem.Profile
+        BottomNavItem.Home,
+        BottomNavItem.Favorite,
+        BottomNavItem.Search,
+        BottomNavItem.Profile
     )
 
     NavigationBar(

@@ -2,15 +2,17 @@ package com.example.readbook.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.readbook.pages.AuthPage
 import com.example.readbook.pages.BookPage
-import com.example.readbook.pages.FavoritePage
 import com.example.readbook.pages.ForgotPassPage
 import com.example.readbook.pages.ForgotPassPage_ChangePass
 import com.example.readbook.pages.ForgotPassPage_Code
 import com.example.readbook.pages.HomePage
+import com.example.readbook.pages.LibraryPage
 import com.example.readbook.pages.ProfilePage
 import com.example.readbook.pages.RegPage
 import com.example.readbook.pages.SearchPage
@@ -21,12 +23,14 @@ fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Route.homePage) {
         composable(Route.homePage){
             HomePage(
-                navigateToBook = { navController.navigate(Route.bookPage) }
+                navController = navController
             )
         }
 
-        composable(Route.mybookPage){
-            FavoritePage()
+        composable(Route.libraryPage){
+            LibraryPage(
+                navController = navController
+            )
         }
 
         composable(Route.searchPage){
@@ -102,8 +106,14 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        composable(route = Route.bookPage) {
+        composable(
+            route = Route.bookPage,
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })
+        ) {
             BookPage(
+                bookId = it.arguments?.getInt("id"),
                 navigateBack = { navController.popBackStack() }
             )
         }

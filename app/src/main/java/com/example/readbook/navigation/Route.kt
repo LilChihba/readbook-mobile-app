@@ -9,7 +9,7 @@ object Route {
     const val forgotPassPage_Code = "codePage"
     const val forgotPassPage_ChangePass = "changePassPage"
     const val homePage = "homePage"
-    const val mybookPage = "mybookPage"
+    const val libraryPage = "libraryPage"
     const val searchPage = "searchPage"
-    const val bookPage = "bookPage"
+    const val bookPage = "bookPage/{id}"
 }

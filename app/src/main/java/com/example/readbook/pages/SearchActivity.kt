@@ -46,8 +46,6 @@ fun SearchPage() {
         GenreItem.Genre6,
         GenreItem.Genre7,
         GenreItem.Genre8,
-        GenreItem.Genre9,
-        GenreItem.Genre10,
     )
 
     Column(

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
+import com.example.readbook.repository.BookRepository
 import com.example.readbook.repository.ReviewRepository
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.BookReview
@@ -35,8 +36,11 @@ import com.example.readbook.ui.theme.RatingBar
 
 @Composable
 fun BookPage(
+    bookId: Int?,
     navigateBack: () -> Unit
 ) {
+    val book = BookRepository().getBookByID(id = bookId)
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Milk)
@@ -66,7 +70,7 @@ fun BookPage(
                         .padding(top = 15.dp),
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.book),
+                        painter = painterResource(id = book!!.image),
                         contentDescription = "Book",
                         modifier = Modifier
                             .width(100.dp)
@@ -77,13 +81,13 @@ fun BookPage(
                         modifier = Modifier.padding(start = 10.dp)
                     ) {
                         Text(
-                            text = "Ведьмак",
+                            text = book.title,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                             fontSize = 22.sp,
                         )
                         Text(
-                            text = "Автор: Анджей Сапковский",
+                            text = "Автор: ${book.author}",
                             color = Color.Black,
                             fontWeight = FontWeight.Normal,
                             fontSize = 14.sp,
@@ -91,13 +95,13 @@ fun BookPage(
                         )
                         Row() {
                             RatingBar(
-                                rating = 5,
+                                rating = book.rating.toInt(),
                                 modifier = Modifier
                                     .width(26.dp)
                                     .height(26.dp)
                             )
                             Text(
-                                text = "5,0",
+                                text = "${book.rating}",
                                 color = Blue,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
@@ -112,7 +116,7 @@ fun BookPage(
                         .padding(top = 15.dp)
                 ) {
                     ButtonApp(
-                        text = "Купить за 899 руб.",
+                        text = "Купить за ${book!!.price} руб.",
                         navigate = { /* TODO */ },
                         modifier = Modifier.height(45.dp),
                         fontsize = 14.sp
@@ -131,18 +135,17 @@ fun BookPage(
                 }
                 Row() {
                     Text(
-                        text = "Описание книги",
+                        text = book!!.description,
                         color = Color.Black,
                         fontWeight = FontWeight.Normal,
                         fontSize = 14.sp,
                         textAlign = TextAlign.Justify
                     )
                 }
-                DescriptionText(title = "Издатель", text = "Москва")
-                DescriptionText(title = "Год издание", text = "2023 г.")
-                DescriptionText(title = "Место издания", text = "Москва")
-                DescriptionText(title = "Количество страниц", text = "500 стр.")
-                DescriptionText(title = "ISBN", text = "ISBN")
+                DescriptionText(title = "Издатель", text = book!!.publisher)
+                DescriptionText(title = "Год издание", text = book.publisher_date)
+                DescriptionText(title = "Количество страниц", text = "${book.pages}")
+                DescriptionText(title = "ISBN", text = book.isbn)
 
                 Row(
                     modifier = Modifier
