@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import com.example.readbook.bottom_navigation.MainScreen
+import com.example.readbook.navigation.MainScreen
 import com.example.readbook.ui.theme.ReadbookTheme
 
 class MainActivity : ComponentActivity() {

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -17,11 +16,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readbook.pages.CardItem
+import androidx.navigation.NavHostController
+import com.example.readbook.models.CardItem
+import com.example.readbook.repository.BookRepository
 
 @Composable
 fun CategoryCard(
-    card: CardItem
+    card: CardItem,
+    navController: NavHostController
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -55,14 +57,25 @@ fun CategoryCard(
                         .padding(start = 10.dp, top = 10.dp)
                 )
             }
+
+            val bookRepository = BookRepository()
+            val getAllData = bookRepository.getAllData()
+
             Box(
                 modifier = Modifier
                     .padding(top = 150.dp, bottom = 8.dp)
             ) {
                 LazyRow() {
-                    items(card.books) { book ->
-                        ButtonBookCategory(book = book)
-                    }
+                    items(
+                        count = getAllData.size,
+                        key = {
+                            getAllData[it].id
+                        },
+                        itemContent = { index ->
+                            val bookItemData = getAllData[index]
+                            ButtonBookCategory(book = bookItemData, navController = navController)
+                        }
+                    )
                 }
             }
         }

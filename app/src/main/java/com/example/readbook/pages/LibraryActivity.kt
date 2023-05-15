@@ -1,11 +1,13 @@
+package com.example.readbook.pages
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -13,17 +15,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.readbook.repository.BookLibraryRepository
 import com.example.readbook.ui.theme.ButtonBook
 import com.example.readbook.ui.theme.Gray
 import com.example.readbook.ui.theme.Milk
 
-@OptIn(ExperimentalLayoutApi::class)
-@Preview
 @Composable
-fun FavoritePage() {
+fun LibraryPage(
+    navController: NavHostController
+) {
+    val bookLibraryRepository = BookLibraryRepository()
+    val getAllData = bookLibraryRepository.getAllData()
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Milk)
@@ -43,14 +49,20 @@ fun FavoritePage() {
                 .fillMaxWidth()
                 .padding(bottom = 20.dp)
         ) {
-            LazyColumn() {
-                items(count = 50) {
-                    LazyRow() {
-                        items(count = 3) {
-                            ButtonBook()
-                        }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 110.dp),
+                contentPadding = PaddingValues(start = 10.dp, top = 10.dp)
+            ) {
+                items(
+                    count = getAllData.size,
+                    key = {
+                        getAllData[it].id
+                    },
+                    itemContent = { index ->
+                        val bookItemData = getAllData[index]
+                        ButtonBook(bookItemData, navController = navController)
                     }
-                }
+                )
             }
         }
     }

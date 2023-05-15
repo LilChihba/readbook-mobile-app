@@ -10,20 +10,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.readbook.models.CardItem
 import com.example.readbook.ui.theme.CategoryCard
 import com.example.readbook.ui.theme.Milk
 
-@Preview
 @Composable
-fun HomePage() {
+fun HomePage(
+    navController: NavHostController
+) {
     val listCard = listOf(
         CardItem.NewBooks,
         CardItem.PopularBooks,
         CardItem.BestBooks
     )
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Milk)
@@ -45,7 +48,7 @@ fun HomePage() {
                 },
                 itemContent = { index ->
                     val cardItemData = listCard[index]
-                    CategoryCard(card = cardItemData)
+                    CategoryCard(card = cardItemData, navController = navController)
                 }
             )
         }

@@ -1,38 +1,45 @@
 package com.example.readbook.ui.theme
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.readbook.R
+import androidx.navigation.NavHostController
+import com.example.readbook.models.BookLibrary
+import com.example.readbook.repository.BookRepository
 
-@Preview
 @Composable
-fun ButtonBook() {
-    IconButton(
-        onClick = { /*TODO*/ },
-        modifier = Modifier
-            .width(110.dp)
-            .height(150.dp)
-            .padding(start = 10.dp, top = 10.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.book),
-            contentDescription = "Book",
+fun ButtonBook(
+    bookLibrary: BookLibrary,
+    navController: NavHostController
+) {
+    val book = BookRepository().getBookByID(id = bookLibrary.id_book)
+
+    if (book != null)
+        Button(
+            onClick = { navController.navigate("bookPage/" + book.id) },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            contentPadding = PaddingValues(0.dp),
+            shape = RoundedCornerShape(5.dp),
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(6.dp))
-        )
-    }
+                .width(110.dp)
+                .height(160.dp)
+                .padding(bottom = 10.dp, end = 10.dp)
+        ) {
+            Image(
+                painter = painterResource(id = book.image),
+                contentDescription = "Book",
+                contentScale = ContentScale.Crop
+            )
+        }
 }
