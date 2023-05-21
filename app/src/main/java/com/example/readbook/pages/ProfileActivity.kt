@@ -68,7 +68,7 @@ fun ProfilePage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.selfy),
+                    painter = painterResource(id = R.drawable.avatar_male),
                     contentDescription = "Avatar",
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
