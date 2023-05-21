@@ -1,5 +1,6 @@
 package com.example.readbook.pages
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,6 +20,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.readbook.models.AuthUser
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
@@ -30,6 +32,8 @@ import com.example.readbook.ui.theme.TopNavigationBar
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuthPage(
+    pref: SharedPreferences?,
+    authUser: AuthUser?,
     navigateToRegPage: () -> Unit,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
@@ -77,7 +81,15 @@ fun AuthPage(
 
                 ButtonApp(
                     text = "Вход",
-                    navigate = { /* TODO */ }
+                    navigate = {
+                        authUser?.auth(textEmail.value, textPassword.value)
+                            navigateBackToProfile()
+                            with(pref!!.edit()) {
+                                putString("mail", textEmail.value)
+                                putString("password", textPassword.value)
+                                apply()
+                        }
+                    }
                 )
                 AdditionalButton(
                     text = "Забыл пароль",
