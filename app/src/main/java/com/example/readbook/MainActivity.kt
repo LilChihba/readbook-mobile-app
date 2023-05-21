@@ -1,5 +1,7 @@
 package com.example.readbook
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,14 +10,16 @@ import androidx.annotation.RequiresApi
 import com.example.readbook.navigation.MainScreen
 import com.example.readbook.ui.theme.ReadbookTheme
 
+@RequiresApi(Build.VERSION_CODES.P)
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.P)
+    var pref : SharedPreferences? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Readbook)
         super.onCreate(savedInstanceState)
         setContent {
             ReadbookTheme {
-                MainScreen()
+                pref = getSharedPreferences("User", Context.MODE_PRIVATE)
+                MainScreen(pref)
             }
         }
     }

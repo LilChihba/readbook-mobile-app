@@ -1,11 +1,13 @@
 package com.example.readbook.navigation
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.readbook.models.AuthUser
 import com.example.readbook.pages.AuthPage
 import com.example.readbook.pages.BookPage
 import com.example.readbook.pages.ForgotPassPage
@@ -19,7 +21,14 @@ import com.example.readbook.pages.SearchPage
 import com.example.readbook.pages.SettingsPage
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(
+    navController: NavHostController,
+    pref: SharedPreferences?
+) {
+    val mail = pref!!.getString("mail", "")
+    val password = pref.getString("password", "")
+    val authUser = AuthUser().auth(mail.toString(), password.toString())
+
     NavHost(navController = navController, startDestination = Route.homePage) {
         composable(Route.homePage){
             HomePage(
@@ -39,6 +48,7 @@ fun NavGraph(navController: NavHostController) {
 
         composable(route = Route.profilePage) {
             ProfilePage(
+                authUser = authUser,
                 navigateToSettingsPage = { navController.navigate(Route.settingsPage) },
                 navigateToAuthPage = { navController.navigate(Route.authPage) }
             )
@@ -53,6 +63,8 @@ fun NavGraph(navController: NavHostController) {
 
         composable(route = Route.authPage) {
             AuthPage(
+                pref = pref,
+                authUser = authUser,
                 navigateToRegPage = { navController.navigate(Route.regPage) },
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(

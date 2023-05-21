@@ -1,6 +1,7 @@
 package com.example.readbook.navigation
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,7 +13,9 @@ import androidx.navigation.compose.rememberNavController
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    pref: SharedPreferences?
+) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = { BottomBarNavigation(navController = navController) }
@@ -20,7 +23,7 @@ fun MainScreen() {
         Box(
             modifier = Modifier.padding(innerPadding)
         ) {
-            NavGraph(navController = navController)
+            NavGraph(navController = navController, pref = pref)
         }
     }
 }

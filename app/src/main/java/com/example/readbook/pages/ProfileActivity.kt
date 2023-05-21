@@ -25,12 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
+import com.example.readbook.models.AuthUser
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 
 @Composable
 fun ProfilePage(
+    authUser: AuthUser?,
     navigateToSettingsPage: () -> Unit,
     navigateToAuthPage: () -> Unit
 ) {
@@ -68,7 +70,7 @@ fun ProfilePage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.avatar_male),
+                    painter = painterResource(id = authUser!!.photo),
                     contentDescription = "Avatar",
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -76,7 +78,7 @@ fun ProfilePage(
                 )
 
                 Text(
-                    text = "Гость",
+                    text = authUser.nickname,
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     color = Blue,
