@@ -43,6 +43,8 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+        exclude 'META-INF/NOTICE.md'
+        exclude 'META-INF/LICENSE.md'
     }
 }
 
@@ -50,6 +52,8 @@ dependencies {
 
     implementation "androidx.navigation:navigation-compose:2.6.0-alpha04"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha"
+    implementation 'com.sun.mail:android-mail:1.6.6'
+    implementation 'com.sun.mail:android-activation:1.6.7'
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'

@@ -80,23 +80,35 @@ fun NavGraph(navController: NavHostController) {
                     route = Route.profilePage,
                     inclusive = false
                 ) },
-                navigateToCodePage = { navController.navigate(Route.forgotPassPage_Code)}
+                navController = navController
             )
         }
 
-        composable(route = Route.forgotPassPage_Code) {
+        composable(
+            route = Route.forgotPassPage_Code,
+            arguments = listOf(navArgument("mail") {
+                type = NavType.StringType
+            })
+        ) {
             ForgotPassPage_Code(
+                mail = it.arguments?.getString("mail"),
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
                     inclusive = false
                 ) },
-                navigateToChangePassPage = { navController.navigate(Route.forgotPassPage_ChangePass)}
+                navController = navController
             )
         }
 
-        composable(route = Route.forgotPassPage_ChangePass) {
+        composable(
+            route = Route.forgotPassPage_ChangePass,
+            arguments = listOf(navArgument("mail") {
+                type = NavType.StringType
+            })
+        ) {
             ForgotPassPage_ChangePass(
+                mail = it.arguments?.getString("mail"),
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
