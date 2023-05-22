@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.readbook.models.User
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
@@ -177,6 +178,7 @@ fun ForgotPassPage_Code(
 @Composable
 fun ForgotPassPage_ChangePass(
     mail: String?,
+    listUsers: MutableList<User>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
     navigateToAuthPage: () -> Unit
@@ -234,6 +236,7 @@ fun ForgotPassPage_ChangePass(
                 ButtonApp(
                     text = "Сменить пароль",
                     mail = mail.toString(),
+                    listUsers = listUsers,
                     password = textPass.value,
                     repeatPassword = repeatTextPass.value,
                     navigate = navigateToAuthPage,

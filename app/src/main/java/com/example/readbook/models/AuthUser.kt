@@ -9,12 +9,13 @@ class AuthUser() {
     var firstName: String = ""
     var middleName: String = ""
     var lastName: String = ""
-    var photo: Int = R.drawable.avatar_female
+    var photo: Int = R.drawable.avatar_male
     var mail: String = ""
     var password: String = ""
+    var auth: Boolean = false
 
-    fun auth(mail: String, password: String): AuthUser {
-        val user = UserRepository().getUserByMail(mail = mail)
+    fun auth(listUsers: MutableList<User>, mail: String, password: String): AuthUser {
+        val user = UserRepository().getUserByMail(listUsers = listUsers, mail = mail)
         if(user != null) {
             return if (user.password == password) {
                 this.id = user.id
@@ -25,11 +26,29 @@ class AuthUser() {
                 this.photo = user.photo
                 this.mail = user.mail
                 this.password = user.password
+                this.auth = true
                 this
-            } else
+            } else {
+                this.auth = false
                 AuthUser()
+            }
         }
-        else
+        else {
+            this.auth = false
             return AuthUser()
+        }
+    }
+
+    fun exit(): AuthUser {
+        this.id = 0
+        this.nickname = "Гость"
+        this.firstName = ""
+        this.middleName = ""
+        this.lastName = ""
+        this.photo = R.drawable.avatar_male
+        this.mail = ""
+        this.password = ""
+        this.auth = false
+        return this
     }
 }

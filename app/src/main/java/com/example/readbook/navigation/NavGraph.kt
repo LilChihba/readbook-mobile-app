@@ -19,15 +19,17 @@ import com.example.readbook.pages.ProfilePage
 import com.example.readbook.pages.RegPage
 import com.example.readbook.pages.SearchPage
 import com.example.readbook.pages.SettingsPage
+import com.example.readbook.repository.UserRepository
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     pref: SharedPreferences?
 ) {
+    val listUsers = UserRepository().getAllData()
     val mail = pref!!.getString("mail", "")
     val password = pref.getString("password", "")
-    val authUser = AuthUser().auth(mail.toString(), password.toString())
+    val authUser = AuthUser().auth(listUsers, mail.toString(), password.toString())
 
     NavHost(navController = navController, startDestination = Route.homePage) {
         composable(Route.homePage){
@@ -56,6 +58,7 @@ fun NavGraph(
 
         composable(route = Route.settingsPage) {
             SettingsPage(
+                authUser = authUser,
                 navigateToAuthPage = { navController.navigate(Route.authPage) },
                 navigateBack = { navController.popBackStack() }
             )
@@ -65,6 +68,7 @@ fun NavGraph(
             AuthPage(
                 pref = pref,
                 authUser = authUser,
+                listUsers = listUsers,
                 navigateToRegPage = { navController.navigate(Route.regPage) },
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
@@ -77,6 +81,9 @@ fun NavGraph(
 
         composable(route = Route.regPage) {
             RegPage(
+                pref = pref,
+                authUser = authUser,
+                listUsers = listUsers,
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
@@ -121,6 +128,7 @@ fun NavGraph(
         ) {
             ForgotPassPage_ChangePass(
                 mail = it.arguments?.getString("mail"),
+                listUsers = listUsers,
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,

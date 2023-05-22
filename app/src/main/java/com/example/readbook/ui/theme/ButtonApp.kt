@@ -1,5 +1,6 @@
 package com.example.readbook.ui.theme
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.readbook.mail.Code
 import com.example.readbook.mail.sendCodeInEmail
+import com.example.readbook.models.AuthUser
+import com.example.readbook.models.User
 import com.example.readbook.repository.UserRepository
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
@@ -32,6 +35,9 @@ fun ButtonApp(
     code: String = "",
     password: String = "",
     repeatPassword: String = "",
+    pref: SharedPreferences? = null,
+    authUser: AuthUser? = null,
+    listUsers: MutableList<User>? = null,
     snackbarHostState: SnackbarHostState? = null,
     modifier: Modifier = Modifier,
     fontsize: TextUnit = 16.sp
@@ -88,7 +94,8 @@ fun ButtonApp(
                     if(password != "" && repeatPassword != "")
                         if(password == repeatPassword) {
                             UserRepository().updatePass(
-                                UserRepository().getUserByMail(mail = mail),
+                                listUsers!!,
+                                mail,
                                 password
                             )
                             navigate()
@@ -107,6 +114,64 @@ fun ButtonApp(
                                 duration = SnackbarDuration.Short
                             )
                         }
+                }
+                "Вход" -> {
+                    if(password != "" && mail != "") {
+                        authUser?.auth(listUsers!!, mail, password)
+                        if(authUser!!.auth) {
+                            with(pref!!.edit()) {
+                                putString("mail", mail)
+                                putString("password", password)
+                                apply()
+                            }
+                            navigate()
+                        }
+                        else {
+                            scope.launch {
+                                snackbarHostState?.showSnackbar(
+                                    message = "Введён неверный логин или пароль!",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    }
+                    else {
+                        scope.launch {
+                            snackbarHostState?.showSnackbar(
+                                message = "Эти поля не могут быть пустыми!",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
+                }
+                "Зарегистрироваться" -> {
+                    if(password != "" && mail != "") {
+                        if(UserRepository().registerUser(listUsers!!, mail, password)) {
+                            authUser?.auth(listUsers, mail, password)
+                            with(pref!!.edit()) {
+                                putString("mail", mail)
+                                putString("password", password)
+                                apply()
+                            }
+                            navigate()
+                        }
+                        else {
+                            scope.launch {
+                                snackbarHostState?.showSnackbar(
+                                    message = "Аккаунт с данной почтой уже зарегистрирован!",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    }
+                    else {
+                        scope.launch {
+                            snackbarHostState?.showSnackbar(
+                                message = "Эти поля не могут быть пустыми!",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
                 }
                 else -> {
                     navigate()

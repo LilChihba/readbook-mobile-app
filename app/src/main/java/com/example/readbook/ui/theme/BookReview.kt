@@ -86,8 +86,7 @@ fun BookReview(
         ) {
             Divider(
                 color = Color.Gray,
-                thickness = (0.25).dp,
-                modifier = Modifier
+                thickness = (0.25).dp
             )
         }
     }

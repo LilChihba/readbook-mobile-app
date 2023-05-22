@@ -32,7 +32,7 @@ import com.example.readbook.ui.theme.Milk
 
 @Composable
 fun ProfilePage(
-    authUser: AuthUser?,
+    authUser: AuthUser,
     navigateToSettingsPage: () -> Unit,
     navigateToAuthPage: () -> Unit
 ) {
@@ -70,7 +70,7 @@ fun ProfilePage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = authUser!!.photo),
+                    painter = painterResource(id = authUser.photo),
                     contentDescription = "Avatar",
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -85,7 +85,8 @@ fun ProfilePage(
                     modifier = Modifier.padding(top = 15.dp)
                 )
 
-                ButtonApp(text = "Вход или регистрация", navigate = navigateToAuthPage)
+                if(!authUser.auth)
+                    ButtonApp(text = "Вход или регистрация", navigate = navigateToAuthPage)
             }
         }
     }
