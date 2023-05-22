@@ -1,33 +1,43 @@
 package com.example.readbook.pages
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
+import com.example.readbook.models.AuthUser
+import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.Gray
 import com.example.readbook.ui.theme.Milk
 
 @Composable
 fun SettingsPage(
+    authUser: AuthUser,
     navigateToAuthPage: () -> Unit,
     navigateBack: () -> Unit
 ) {
@@ -75,8 +85,7 @@ fun SettingsPage(
                     colors = CardDefaults.cardColors(
                         containerColor = Gray
                     ),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "Учётная запись",
@@ -85,17 +94,77 @@ fun SettingsPage(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 20.dp, top = 20.dp)
                     )
-                    Button(
-                        onClick = { navigateToAuthPage() },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = "Вход или регистрация",
-                            color = Blue,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 20.dp, bottom = 5.dp)
-                        )
+                    if(!authUser.auth)
+                        Button(
+                            onClick = { navigateToAuthPage() },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text(
+                                text = "Вход или регистрация",
+                                color = Blue,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 20.dp, bottom = 5.dp)
+                            )
+                        }
+                    else {
+                        Column() {
+                            Button(
+                                onClick = { /*TODO*/ },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                                shape = RoundedCornerShape(0.dp),
+                            ) {
+                                Row() {
+                                    Image(
+                                        painter = painterResource(id = authUser.photo),
+                                        contentDescription = "Avatar",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(RoundedCornerShape(5.dp))
+                                    )
+                                    Column(
+                                        modifier = Modifier.padding(start = 10.dp)
+                                    ) {
+                                        Text(
+                                            text = "${authUser.firstName} ${authUser.lastName}",
+                                            fontSize = 12.sp,
+                                            color = Blue
+                                        )
+                                        Text(
+                                            text = authUser.mail,
+                                            fontSize = 12.sp,
+                                            color = Blue,
+                                            modifier = Modifier.padding(top = 5.dp)
+                                        )
+                                    }
+                                    Spacer(
+                                        modifier = Modifier.weight(1.0f)
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.arrow_right),
+                                        contentDescription = "arrow",
+                                        tint = Blue,
+                                        modifier = Modifier
+                                            .size(35.dp)
+                                    )
+                                }
+                            }
+                            Divider(
+                                color = Color.Gray,
+                                thickness = (0.25).dp
+                            )
+                            AdditionalButton(
+                                text = "Выйти",
+                                fontSize = 12.sp,
+                                navigate = {
+                                    authUser.exit()
+                                    navigateBack()
+                                },
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .height(25.dp)
+                            )
+                        }
                     }
                 }
 
@@ -112,14 +181,16 @@ fun SettingsPage(
                         color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 20.dp, top = 20.dp)
+                        modifier = Modifier
+                            .padding(start = 20.dp, top = 20.dp)
                     )
 
                     Text(
                         text = "Версия 0.1",
                         color = Color.Black,
                         fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 20.dp, top = 12.dp, bottom = 15.dp)
+                        modifier = Modifier
+                            .padding(start = 20.dp, top = 12.dp, bottom = 15.dp)
                     )
                 }
             }
