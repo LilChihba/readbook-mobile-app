@@ -40,7 +40,7 @@ fun HomePage(
             modifier = Modifier.padding(bottom = 15.dp)
         )
 
-        LazyColumn() {
+        LazyColumn {
             items(
                 count = listCard.size,
                 key = {

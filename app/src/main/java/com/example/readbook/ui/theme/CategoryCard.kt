@@ -65,7 +65,7 @@ fun CategoryCard(
                 modifier = Modifier
                     .padding(top = 150.dp, bottom = 8.dp)
             ) {
-                LazyRow() {
+                LazyRow {
                     items(
                         count = getAllData.size,
                         key = {

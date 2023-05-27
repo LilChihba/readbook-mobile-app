@@ -3,7 +3,7 @@ package com.example.readbook.models
 import com.example.readbook.R
 import com.example.readbook.repository.UserRepository
 
-class AuthUser() {
+class AuthUser {
     var id = 0
     var nickname: String = "Гость"
     var firstName: String = ""

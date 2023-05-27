@@ -49,11 +49,11 @@ fun ButtonApp(
             when(text){
                 "Отправить письмо" -> {
                     if(mail != "") {
-                        if(UserRepository().getUserByMail(mail = mail) != null) {
+                        if(UserRepository().getUserByMail(listUsers, mail = mail) != null) {
                             thread {
                                 sendCodeInEmail(mail)
                             }
-                            navController?.navigate("codePage/" + mail)
+                            navController?.navigate("codePage/$mail")
                         }
                         else
                             scope.launch {
@@ -74,7 +74,7 @@ fun ButtonApp(
                 "Проверить код" -> {
                     if(code != "")
                         if(code == Code.value)
-                            navController?.navigate("changePassPage/" + mail)
+                            navController?.navigate("changePassPage/$mail")
                         else
                             scope.launch {
                                 snackbarHostState?.showSnackbar(

@@ -37,6 +37,7 @@ private var textEmail: MutableState<String> = mutableStateOf("")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage(
+    listUsers: MutableList<User>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
     navController: NavHostController
@@ -67,7 +68,7 @@ fun ForgotPassPage(
                     .fillMaxWidth()
                     .padding(start = 45.dp, end = 45.dp, top = 58.dp)
             ) {
-                Column() {
+                Column {
                     Text(
                         text = "Восстановление доступа к аккаунту",
                         color = Color.Black,
@@ -90,6 +91,7 @@ fun ForgotPassPage(
                         text = "Отправить письмо",
                         navController = navController,
                         mail = textEmail.value,
+                        listUsers = listUsers,
                         snackbarHostState = snackbarHostState
                     )
                 }
@@ -137,7 +139,7 @@ fun ForgotPassPage_Code(
                     .fillMaxWidth()
                     .padding(start = 45.dp, top = 58.dp, end = 45.dp)
             ) {
-                Column() {
+                Column {
                     Text(
                         text = "Восстановление доступа к аккаунту",
                         color = Color.Black,
@@ -210,7 +212,7 @@ fun ForgotPassPage_ChangePass(
                     .fillMaxWidth()
                     .padding(start = 45.dp, top = 58.dp, end = 45.dp)
             ) {
-                Column() {
+                Column {
                     Text(
                         text = "Восстановление доступа к аккаунту",
                         color = Color.Black,

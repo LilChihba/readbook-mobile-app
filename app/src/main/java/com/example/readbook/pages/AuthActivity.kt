@@ -72,7 +72,7 @@ fun AuthPage(
                     .fillMaxWidth()
                     .padding(start = 45.dp, top = 58.dp, end = 45.dp)
             ) {
-                Row() {
+                Row {
                     Text(
                         text = "Вход",
                         color = Color.Black,
