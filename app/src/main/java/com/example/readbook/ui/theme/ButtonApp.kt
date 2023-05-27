@@ -11,8 +11,10 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,7 @@ fun ButtonApp(
     authUser: AuthUser? = null,
     listUsers: MutableList<User>? = null,
     snackbarHostState: SnackbarHostState? = null,
+    colorSnackBar: MutableState<Color>? = null,
     modifier: Modifier = Modifier,
     fontsize: TextUnit = 16.sp
 ) {
@@ -55,40 +58,48 @@ fun ButtonApp(
                             }
                             navController?.navigate("codePage/$mail")
                         }
-                        else
+                        else {
+                            colorSnackBar?.value = Color.Red
                             scope.launch {
                                 snackbarHostState?.showSnackbar(
                                     message = "Аккаунта с данной почтой не существует. Зарегистрируйтесь!",
                                     duration = SnackbarDuration.Short
                                 )
                             }
+                        }
                     }
-                    else
+                    else {
+                        colorSnackBar?.value = Color.Red
                         scope.launch {
                             snackbarHostState?.showSnackbar(
                                 message = "Это поле не может быть пустым!",
                                 duration = SnackbarDuration.Short
                             )
                         }
+                    }
                 }
                 "Проверить код" -> {
                     if(code != "")
                         if(code == Code.value)
                             navController?.navigate("changePassPage/$mail")
-                        else
+                        else {
+                            colorSnackBar?.value = Color.Red
                             scope.launch {
                                 snackbarHostState?.showSnackbar(
                                     message = "Введён неверный код!",
                                     duration = SnackbarDuration.Short
                                 )
                             }
-                    else
+                        }
+                    else {
+                        colorSnackBar?.value = Color.Red
                         scope.launch {
                             snackbarHostState?.showSnackbar(
                                 message = "Это поле не может быть пустым!",
                                 duration = SnackbarDuration.Short
                             )
                         }
+                    }
                 }
                 "Сменить пароль" -> {
                     if(password != "" && repeatPassword != "")
@@ -99,21 +110,32 @@ fun ButtonApp(
                                 password
                             )
                             navigate()
+                            colorSnackBar?.value = Color.Green
+                            scope.launch {
+                                snackbarHostState?.showSnackbar(
+                                    message = "Вы успешно сменили пароль!",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
-                        else
+                        else {
+                            colorSnackBar?.value = Color.Red
                             scope.launch {
                                 snackbarHostState?.showSnackbar(
                                     message = "Пароли не совпадают, повторите попытку!",
                                     duration = SnackbarDuration.Short
                                 )
                             }
-                    else
+                        }
+                    else {
+                        colorSnackBar?.value = Color.Red
                         scope.launch {
                             snackbarHostState?.showSnackbar(
                                 message = "Эти поля не могут быть пустыми!",
                                 duration = SnackbarDuration.Short
                             )
                         }
+                    }
                 }
                 "Вход" -> {
                     if(password != "" && mail != "") {
@@ -124,9 +146,17 @@ fun ButtonApp(
                                 putString("password", password)
                                 apply()
                             }
+                            colorSnackBar?.value = Color.Green
                             navigate()
+                            scope.launch {
+                                snackbarHostState?.showSnackbar(
+                                    message = "Вы успешно авторизовались!",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
                         else {
+                            colorSnackBar?.value = Color.Red
                             scope.launch {
                                 snackbarHostState?.showSnackbar(
                                     message = "Введён неверный логин или пароль!",
@@ -136,6 +166,7 @@ fun ButtonApp(
                         }
                     }
                     else {
+                        colorSnackBar?.value = Color.Red
                         scope.launch {
                             snackbarHostState?.showSnackbar(
                                 message = "Эти поля не могут быть пустыми!",
@@ -154,8 +185,16 @@ fun ButtonApp(
                                 apply()
                             }
                             navigate()
+                            colorSnackBar?.value = Color.Green
+                            scope.launch {
+                                snackbarHostState?.showSnackbar(
+                                    message = "Вы успешно зарегистрировались!",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
                         else {
+                            colorSnackBar?.value = Color.Red
                             scope.launch {
                                 snackbarHostState?.showSnackbar(
                                     message = "Аккаунт с данной почтой уже зарегистрирован!",
@@ -165,6 +204,7 @@ fun ButtonApp(
                         }
                     }
                     else {
+                        colorSnackBar?.value = Color.Red
                         scope.launch {
                             snackbarHostState?.showSnackbar(
                                 message = "Эти поля не могут быть пустыми!",

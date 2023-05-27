@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -27,7 +28,6 @@ import com.example.readbook.models.User
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
-import com.example.readbook.ui.theme.SnackbarCustom
 import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
@@ -38,13 +38,14 @@ fun RegPage(
     pref: SharedPreferences?,
     authUser: AuthUser,
     listUsers: MutableList<User>,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit
 ) {
     val textEmail = remember{ mutableStateOf("") }
     val textPassword = remember{ mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = SnackbarHostState()
 
     Column(
         modifier = Modifier
@@ -89,6 +90,7 @@ fun RegPage(
                         text = "Зарегистрироваться",
                         navigate = navigateBackToProfile,
                         snackbarHostState = snackbarHostState,
+                        colorSnackBar = colorSnackBar,
                         mail = textEmail.value,
                         password = textPassword.value,
                         pref = pref,
@@ -97,11 +99,6 @@ fun RegPage(
                     )
                 }
             }
-            SnackbarCustom(
-                state = snackbarHostState,
-                text = snackbarHostState.currentSnackbarData?.visuals?.message?: "",
-                color = Color.Red
-            )
         }
     }
 }

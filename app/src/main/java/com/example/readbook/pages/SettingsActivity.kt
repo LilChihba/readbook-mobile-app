@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -138,16 +139,16 @@ fun SettingsPage(
                                             modifier = Modifier.padding(top = 5.dp)
                                         )
                                     }
-//                                    Spacer(
-//                                        modifier = Modifier.weight(1.0f)
-//                                    )
-//                                    Icon(
-//                                        painter = painterResource(id = R.drawable.arrow_right),
-//                                        contentDescription = "arrow",
-//                                        tint = Blue,
-//                                        modifier = Modifier
-//                                            .size(35.dp)
-//                                    )
+                                    Spacer(
+                                        modifier = Modifier.weight(1.0f)
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.arrow_right),
+                                        contentDescription = "arrow",
+                                        tint = Blue,
+                                        modifier = Modifier
+                                            .size(35.dp)
+                                    )
                                 }
                             }
                             Divider(

@@ -20,6 +20,9 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +43,6 @@ import com.example.readbook.ui.theme.BookReview
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.RatingBar
-import com.example.readbook.ui.theme.SnackbarCustom
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,15 +50,16 @@ fun BookPage(
     bookId: Int?,
     authUser: AuthUser,
     listBooks: MutableList<BookLibrary>,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit
 ) {
     val book = BookRepository().getBookByID(id = bookId)
-    val snackbarHostState = SnackbarHostState()
     val scope = rememberCoroutineScope()
     val text = if(BookRepository().isBuyed(listBooks, book, authUser))
-        "У вас уже куплена эта книга!"
+        remember { mutableStateOf("У вас уже куплена эта книга!") }
     else
-        "Купить за ${book!!.price} руб."
+        remember { mutableStateOf("Купить за ${book!!.price} руб.") }
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -136,27 +139,33 @@ fun BookPage(
                             .padding(top = 15.dp)
                     ) {
                         ButtonApp(
-                            text = text,
+                            text = text.value,
                             navigate = {
                                 if(true)
                                     if(authUser.auth)
                                         if(!BookRepository().isBuyed(listBooks, book, authUser)) {
-                                            if(BookLibraryRepository().addBookInLibrary(authUser, listBooks, book))
+                                            if(BookLibraryRepository().addBookInLibrary(authUser, listBooks, book)) {
+                                                colorSnackBar.value = Color.Green
                                                 scope.launch {
                                                     snackbarHostState.showSnackbar(
                                                         message = "Поздравляю! Вы только что приобрели книгу! Она теперь находится в вашей библиотеке",
                                                         duration = SnackbarDuration.Short
                                                     )
                                                 }
-                                            else
+                                                text.value = "У вас уже куплена эта книга!"
+                                            }
+                                            else {
+                                                colorSnackBar.value = Color.Red
                                                 scope.launch {
                                                     snackbarHostState.showSnackbar(
                                                         message = "Произошла ошибка!",
                                                         duration = SnackbarDuration.Short
                                                     )
                                                 }
+                                            }
                                         }
                                         else {
+                                            colorSnackBar.value = Color.Red
                                             scope.launch {
                                                 snackbarHostState.showSnackbar(
                                                     message = "Эта книга уже приобретена! Посмотрите свою библиотеку",
@@ -164,13 +173,15 @@ fun BookPage(
                                                 )
                                             }
                                         }
-                                    else
+                                    else {
+                                        colorSnackBar.value = Color.Red
                                         scope.launch {
                                             snackbarHostState.showSnackbar(
                                                 message = "Ошибка! Чтобы купить книгу, необходимо авторизоваться",
                                                 duration = SnackbarDuration.Short
                                             )
                                         }
+                                    }
                             },
                             modifier = Modifier.height(45.dp),
                             fontsize = 14.sp
@@ -228,11 +239,6 @@ fun BookPage(
                     }
                 )
             }
-            SnackbarCustom(
-                state = snackbarHostState,
-                text = snackbarHostState.currentSnackbarData?.visuals?.message?: "",
-                color = Color.Red
-            )
         }
     }
 }
