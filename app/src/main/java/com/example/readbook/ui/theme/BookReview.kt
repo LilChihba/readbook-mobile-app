@@ -34,7 +34,7 @@ fun BookReview(
             .fillMaxWidth()
             .padding(bottom = 20.dp)
     ) {
-        Row() {
+        Row {
             Image(
                 painter = painterResource(id = R.drawable.avatar_male),
                 contentDescription = "avatar",

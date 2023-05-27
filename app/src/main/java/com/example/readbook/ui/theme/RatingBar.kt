@@ -16,7 +16,7 @@ fun RatingBar(
     rating: Int,
     modifier: Modifier = Modifier
 ) {
-    Row() {
+    Row {
         for(i in 1..5) {
             Icon(
                 painter = painterResource(id = R.drawable.star),

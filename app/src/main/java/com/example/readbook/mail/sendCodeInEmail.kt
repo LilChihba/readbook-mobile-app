@@ -27,7 +27,7 @@ fun sendCodeInEmail(
     val msg = MimeMessage(session)
     msg.setFrom(InternetAddress(Credentials.EMAIL))
     msg.setRecipients(Message.RecipientType.TO, to)
-    msg.setSubject("Код для восстановления пароля")
+    msg.subject = "Код для восстановления пароля"
     msg.setText(generateCode())
 
     Transport.send(msg)

@@ -19,6 +19,7 @@ import com.example.readbook.pages.ProfilePage
 import com.example.readbook.pages.RegPage
 import com.example.readbook.pages.SearchPage
 import com.example.readbook.pages.SettingsPage
+import com.example.readbook.repository.BookLibraryRepository
 import com.example.readbook.repository.UserRepository
 
 @Composable
@@ -27,6 +28,7 @@ fun NavGraph(
     pref: SharedPreferences?
 ) {
     val listUsers = UserRepository().getAllData()
+    val listLibraryBooks = BookLibraryRepository().getAllData()
     val mail = pref!!.getString("mail", "")
     val password = pref.getString("password", "")
     val authUser = AuthUser().auth(listUsers, mail.toString(), password.toString())
@@ -40,6 +42,8 @@ fun NavGraph(
 
         composable(Route.libraryPage){
             LibraryPage(
+                authUser = authUser,
+                listLibraryBooks = listLibraryBooks,
                 navController = navController
             )
         }
@@ -59,6 +63,7 @@ fun NavGraph(
         composable(route = Route.settingsPage) {
             SettingsPage(
                 authUser = authUser,
+                pref = pref,
                 navigateToAuthPage = { navController.navigate(Route.authPage) },
                 navigateBack = { navController.popBackStack() }
             )
@@ -94,6 +99,7 @@ fun NavGraph(
 
         composable(route = Route.forgotPassPage) {
             ForgotPassPage(
+                listUsers = listUsers,
                 navigateBack = { navController.popBackStack() },
                 navigateBackToProfile = { navController.popBackStack(
                     route = Route.profilePage,
@@ -146,6 +152,8 @@ fun NavGraph(
         ) {
             BookPage(
                 bookId = it.arguments?.getInt("id"),
+                authUser = authUser,
+                listBooks = listLibraryBooks,
                 navigateBack = { navController.popBackStack() }
             )
         }

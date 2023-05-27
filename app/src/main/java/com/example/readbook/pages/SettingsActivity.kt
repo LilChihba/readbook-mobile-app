@@ -1,11 +1,11 @@
 package com.example.readbook.pages
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +38,7 @@ import com.example.readbook.ui.theme.Milk
 @Composable
 fun SettingsPage(
     authUser: AuthUser,
+    pref: SharedPreferences?,
     navigateToAuthPage: () -> Unit,
     navigateBack: () -> Unit
 ) {
@@ -108,13 +109,13 @@ fun SettingsPage(
                             )
                         }
                     else {
-                        Column() {
+                        Column {
                             Button(
                                 onClick = { /*TODO*/ },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                                 shape = RoundedCornerShape(0.dp),
                             ) {
-                                Row() {
+                                Row {
                                     Image(
                                         painter = painterResource(id = authUser.photo),
                                         contentDescription = "Avatar",
@@ -137,16 +138,16 @@ fun SettingsPage(
                                             modifier = Modifier.padding(top = 5.dp)
                                         )
                                     }
-                                    Spacer(
-                                        modifier = Modifier.weight(1.0f)
-                                    )
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.arrow_right),
-                                        contentDescription = "arrow",
-                                        tint = Blue,
-                                        modifier = Modifier
-                                            .size(35.dp)
-                                    )
+//                                    Spacer(
+//                                        modifier = Modifier.weight(1.0f)
+//                                    )
+//                                    Icon(
+//                                        painter = painterResource(id = R.drawable.arrow_right),
+//                                        contentDescription = "arrow",
+//                                        tint = Blue,
+//                                        modifier = Modifier
+//                                            .size(35.dp)
+//                                    )
                                 }
                             }
                             Divider(
@@ -158,6 +159,12 @@ fun SettingsPage(
                                 fontSize = 12.sp,
                                 navigate = {
                                     authUser.exit()
+                                    with(pref!!.edit()) {
+                                        putString("mail", "")
+                                        putString("password", "")
+                                        apply()
+                                    }
+
                                     navigateBack()
                                 },
                                 modifier = Modifier
