@@ -27,7 +27,6 @@ import com.example.readbook.models.User
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
-import com.example.readbook.ui.theme.SnackbarCustom
 import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
@@ -38,13 +37,14 @@ private var textEmail: MutableState<String> = mutableStateOf("")
 @Composable
 fun ForgotPassPage(
     listUsers: MutableList<User>,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
     navController: NavHostController
 ) {
     textEmail = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = SnackbarHostState()
 
     Column(
         modifier = Modifier
@@ -92,15 +92,11 @@ fun ForgotPassPage(
                         navController = navController,
                         mail = textEmail.value,
                         listUsers = listUsers,
-                        snackbarHostState = snackbarHostState
+                        snackbarHostState = snackbarHostState,
+                        colorSnackBar = colorSnackBar
                     )
                 }
             }
-            SnackbarCustom(
-                state = snackbarHostState,
-                text = snackbarHostState.currentSnackbarData?.visuals?.message?: "",
-                color = Color.Red
-            )
         }
     }
 }
@@ -109,13 +105,14 @@ fun ForgotPassPage(
 @Composable
 fun ForgotPassPage_Code(
     mail: String?,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
     navController: NavHostController
 ) {
     val textCode = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = SnackbarHostState()
 
     Column(
         modifier = Modifier
@@ -164,14 +161,10 @@ fun ForgotPassPage_Code(
                     navController = navController,
                     code = textCode.value,
                     mail = mail.toString(),
-                    snackbarHostState = snackbarHostState
+                    snackbarHostState = snackbarHostState,
+                    colorSnackBar = colorSnackBar
                 )
             }
-            SnackbarCustom(
-                state = snackbarHostState,
-                text = snackbarHostState.currentSnackbarData?.visuals?.message?: "",
-                color = Color.Red
-            )
         }
     }
 }
@@ -181,6 +174,8 @@ fun ForgotPassPage_Code(
 fun ForgotPassPage_ChangePass(
     mail: String?,
     listUsers: MutableList<User>,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
     navigateToAuthPage: () -> Unit
@@ -188,7 +183,6 @@ fun ForgotPassPage_ChangePass(
     val textPass = rememberSaveable { mutableStateOf("") }
     val repeatTextPass = rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = SnackbarHostState()
 
     Column(
         modifier = Modifier
@@ -242,14 +236,10 @@ fun ForgotPassPage_ChangePass(
                     password = textPass.value,
                     repeatPassword = repeatTextPass.value,
                     navigate = navigateToAuthPage,
-                    snackbarHostState = snackbarHostState
+                    snackbarHostState = snackbarHostState,
+                    colorSnackBar = colorSnackBar
                 )
             }
-            SnackbarCustom(
-                state = snackbarHostState,
-                text = snackbarHostState.currentSnackbarData?.visuals?.message?: "",
-                color = Color.Red
-            )
         }
     }
 }
