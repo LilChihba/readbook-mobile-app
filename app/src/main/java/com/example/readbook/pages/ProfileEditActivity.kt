@@ -126,7 +126,7 @@ fun ProfileEditPage(
                 }
                 AdditionalButton(
                     text = "Сменить фото",
-                    modifier = Modifier.padding(bottom = 20.dp),
+                    modifier = Modifier.padding(top = 20.dp),
                     navigate = { launcher.launch("image/*") }
                 )
 
