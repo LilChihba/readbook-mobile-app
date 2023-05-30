@@ -19,6 +19,7 @@ import com.example.readbook.pages.ForgotPassPage_ChangePass
 import com.example.readbook.pages.ForgotPassPage_Code
 import com.example.readbook.pages.HomePage
 import com.example.readbook.pages.LibraryPage
+import com.example.readbook.pages.ProfileEditPage
 import com.example.readbook.pages.ProfilePage
 import com.example.readbook.pages.RegPage
 import com.example.readbook.pages.SearchPage
@@ -74,7 +75,8 @@ fun NavGraph(
                     authUser = authUser,
                     pref = pref,
                     navigateToAuthPage = { navController.navigate(Route.authPage) },
-                    navigateBack = { navController.popBackStack() }
+                    navigateBack = { navController.popBackStack() },
+                    navigateToProfileEdit = { navController.navigate(Route.profileEditPage) }
                 )
             }
 
@@ -176,6 +178,19 @@ fun NavGraph(
                     snackbarHostState = snackbarHostState,
                     colorSnackBar = colorSnackBar,
                     navigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = Route.profileEditPage
+            ) {
+                ProfileEditPage(
+                    authUser = authUser,
+                    navigateBack = { navController.popBackStack() },
+                    navigateBackToProfile = { navController.popBackStack(
+                        route = Route.profilePage,
+                        inclusive = false
+                    ) }
                 )
             }
         }

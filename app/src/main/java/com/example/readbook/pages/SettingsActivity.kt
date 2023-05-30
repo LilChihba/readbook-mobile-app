@@ -41,7 +41,8 @@ fun SettingsPage(
     authUser: AuthUser,
     pref: SharedPreferences?,
     navigateToAuthPage: () -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateToProfileEdit: () -> Unit
 ) {
     Column(modifier = Modifier
         .fillMaxSize()
@@ -112,7 +113,7 @@ fun SettingsPage(
                     else {
                         Column {
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = { navigateToProfileEdit() },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                                 shape = RoundedCornerShape(0.dp),
                             ) {

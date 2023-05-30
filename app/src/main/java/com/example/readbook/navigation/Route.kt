@@ -3,6 +3,7 @@ package com.example.readbook.navigation
 object Route {
     const val profilePage = "profilePage"
     const val settingsPage = "settingPage"
+    const val profileEditPage = "profileEditPage"
     const val authPage = "authPage"
     const val regPage = "regPage"
     const val forgotPassPage = "forgotPassPage"
