@@ -137,44 +137,44 @@ fun ButtonApp(
                         }
                     }
                 }
-                "Вход" -> {
-                    if(password != "" && mail != "") {
-                        authUser?.auth(listUsers!!, mail, password)
-                        if(authUser!!.auth) {
-                            with(pref!!.edit()) {
-                                putString("mail", mail)
-                                putString("password", password)
-                                apply()
-                            }
-                            colorSnackBar?.value = Color.Green
-                            navigate()
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Вы успешно авторизовались!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                        else {
-                            colorSnackBar?.value = Color.Red
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Введён неверный логин или пароль!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                    }
-                    else {
-                        colorSnackBar?.value = Color.Red
-                        scope.launch {
-                            snackbarHostState?.showSnackbar(
-                                message = "Эти поля не могут быть пустыми!",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }
-                }
+//                "Вход" -> {
+//                    if(password != "" && mail != "") {
+//                        authUser?.auth(listUsers!!, mail, password)
+//                        if(authUser!!.auth) {
+//                            with(pref!!.edit()) {
+//                                putString("mail", mail)
+//                                putString("password", password)
+//                                apply()
+//                            }
+//                            colorSnackBar?.value = Color.Green
+//                            navigate()
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Вы успешно авторизовались!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
+//                        else {
+//                            colorSnackBar?.value = Color.Red
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Введён неверный логин или пароль!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
+//                    }
+//                    else {
+//                        colorSnackBar?.value = Color.Red
+//                        scope.launch {
+//                            snackbarHostState?.showSnackbar(
+//                                message = "Эти поля не могут быть пустыми!",
+//                                duration = SnackbarDuration.Short
+//                            )
+//                        }
+//                    }
+//                }
                 "Зарегистрироваться" -> {
                     if(password != "" && mail != "") {
                         if(UserRepository().registerUser(listUsers!!, mail, password)) {

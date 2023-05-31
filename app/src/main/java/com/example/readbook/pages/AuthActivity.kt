@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.readbook.models.ApiClient
 import com.example.readbook.models.AuthUser
 import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
@@ -33,6 +34,8 @@ import com.example.readbook.ui.theme.PassBox
 import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
+import kotlin.concurrent.thread
+
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -94,7 +97,12 @@ fun AuthPage(
 
                     ButtonApp(
                         text = "Вход",
-                        navigate = navigateBackToProfile,
+                        navigate = {
+                            thread {
+                                ApiClient().auth(textEmail.value, textPassword.value)
+                            }
+                            navigateBackToProfile()
+                        },
                         snackbarHostState = snackbarHostState,
                         colorSnackBar = colorSnackBar,
                         mail = textEmail.value,
@@ -122,3 +130,47 @@ fun AuthPage(
         }
     }
 }
+
+//fun Auth(
+//    mail: String,
+//    password: String
+//) {
+//    val authURL = URL(Url.AUTH_URL)
+//
+//    var reqParam = URLEncoder.encode("grant_type", "UTF-8") + "=" + URLEncoder.encode("password", "UTF-8")
+//    reqParam += "&" + URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(mail, "UTF-8")
+//    reqParam += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8")
+//
+//    val userCredentials = "test-client:test-client"
+//
+//    val basicAuth = "Basic " + String(Base64.encode(userCredentials.toByteArray(), 0))
+//
+//    with(authURL.openConnection() as HttpURLConnection) {
+//        requestMethod = "POST"
+//        setRequestProperty("Authorization", basicAuth)
+//
+//        val owr = OutputStreamWriter(outputStream)
+//        owr.write(reqParam)
+//        owr.flush()
+//        owr.close()
+//
+//        Log.v("AuthHTTP", "$url")
+//        Log.v("AuthHTTP", "$responseCode + $responseMessage")
+//
+//        val br = BufferedReader(
+//            InputStreamReader(
+//                inputStream
+//            )
+//        )
+//
+//        var output: String?
+//        println("Output from Server .... \n")
+//        while (br.readLine().also { output = it } != null) {
+//            println(output)
+//            val gson = GsonBuilder()
+//                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//                .create()
+////            token = gson.fromJson(output, Token::class.java)
+//        }
+//    }
+//}
