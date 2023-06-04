@@ -15,31 +15,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.readbook.models.BookLibrary
-import com.example.readbook.repository.BookRepository
 
 @Composable
 fun ButtonBook(
-    bookLibrary: BookLibrary,
+//    bookLibrary: BookLibrary,
     navController: NavHostController
 ) {
-    val book = BookRepository().getBookByID(id = bookLibrary.id_book)
+//    val book = BookRepository().getBookByID(id = bookLibrary.id_book)
 
-    if (book != null)
-        Button(
-            onClick = { navController.navigate("bookPage/" + book.id) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(5.dp),
-            modifier = Modifier
-                .width(110.dp)
-                .height(160.dp)
-                .padding(bottom = 10.dp, end = 10.dp)
-        ) {
-            Image(
-                painter = painterResource(id = book.image),
-                contentDescription = "Book",
-                contentScale = ContentScale.Crop
-            )
-        }
+//    if (book != null)
+//        Button(
+//            onClick = { navController.navigate("bookPage/" + book.id) },
+//            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+//            contentPadding = PaddingValues(0.dp),
+//            shape = RoundedCornerShape(5.dp),
+//            modifier = Modifier
+//                .width(110.dp)
+//                .height(160.dp)
+//                .padding(bottom = 10.dp, end = 10.dp)
+//        ) {
+//            Image(
+//                painter = painterResource(id = book.image),
+//                contentDescription = "Book",
+//                contentScale = ContentScale.Crop
+//            )
+//        }
 }

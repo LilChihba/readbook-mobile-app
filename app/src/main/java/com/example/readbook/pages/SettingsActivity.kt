@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
-import com.example.readbook.models.AuthUser
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.Gray
@@ -38,7 +37,7 @@ import com.example.readbook.ui.theme.Milk
 
 @Composable
 fun SettingsPage(
-    authUser: AuthUser,
+//    authUser: AuthUser,
     pref: SharedPreferences?,
     navigateToAuthPage: () -> Unit,
     navigateBack: () -> Unit,
@@ -97,82 +96,82 @@ fun SettingsPage(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 20.dp, top = 20.dp)
                     )
-                    if(!authUser.auth)
-                        Button(
-                            onClick = { navigateToAuthPage() },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Text(
-                                text = "Вход или регистрация",
-                                color = Blue,
-                                fontSize = 14.sp,
-                                modifier = Modifier.padding(start = 20.dp, bottom = 5.dp)
-                            )
-                        }
-                    else {
-                        Column {
-                            Button(
-                                onClick = { navigateToProfileEdit() },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(0.dp),
-                            ) {
-                                Row {
-                                    Image(
-                                        painter = painterResource(id = authUser.photo),
-                                        contentDescription = "Avatar",
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(RoundedCornerShape(5.dp))
-                                    )
-                                    Column(
-                                        modifier = Modifier.padding(start = 10.dp)
-                                    ) {
-                                        Text(
-                                            text = "${authUser.firstName} ${authUser.lastName}",
-                                            fontSize = 12.sp,
-                                            color = Blue
-                                        )
-                                        Text(
-                                            text = authUser.mail,
-                                            fontSize = 12.sp,
-                                            color = Blue,
-                                            modifier = Modifier.padding(top = 5.dp)
-                                        )
-                                    }
-                                    Spacer(
-                                        modifier = Modifier.weight(1.0f)
-                                    )
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.arrow_right),
-                                        contentDescription = "arrow",
-                                        tint = Blue,
-                                        modifier = Modifier
-                                            .size(35.dp)
-                                    )
-                                }
-                            }
+//                    if(!authUser.auth)
+//                        Button(
+//                            onClick = { navigateToAuthPage() },
+//                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+//                            contentPadding = PaddingValues(0.dp)
+//                        ) {
+//                            Text(
+//                                text = "Вход или регистрация",
+//                                color = Blue,
+//                                fontSize = 14.sp,
+//                                modifier = Modifier.padding(start = 20.dp, bottom = 5.dp)
+//                            )
+//                        }
+//                    else {
+//                        Column {
+//                            Button(
+//                                onClick = { navigateToProfileEdit() },
+//                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+//                                shape = RoundedCornerShape(0.dp),
+//                            ) {
+//                                Row {
+//                                    Image(
+//                                        painter = painterResource(id = authUser.photo),
+//                                        contentDescription = "Avatar",
+//                                        modifier = Modifier
+//                                            .size(40.dp)
+//                                            .clip(RoundedCornerShape(5.dp))
+//                                    )
+//                                    Column(
+//                                        modifier = Modifier.padding(start = 10.dp)
+//                                    ) {
+//                                        Text(
+//                                            text = "${authUser.firstName} ${authUser.lastName}",
+//                                            fontSize = 12.sp,
+//                                            color = Blue
+//                                        )
+//                                        Text(
+//                                            text = authUser.mail,
+//                                            fontSize = 12.sp,
+//                                            color = Blue,
+//                                            modifier = Modifier.padding(top = 5.dp)
+//                                        )
+//                                    }
+//                                    Spacer(
+//                                        modifier = Modifier.weight(1.0f)
+//                                    )
+//                                    Icon(
+//                                        painter = painterResource(id = R.drawable.arrow_right),
+//                                        contentDescription = "arrow",
+//                                        tint = Blue,
+//                                        modifier = Modifier
+//                                            .size(35.dp)
+//                                    )
+//                                }
+//                            }
                             Divider(
                                 color = Color.Gray,
                                 thickness = (0.25).dp
                             )
-                            AdditionalButton(
-                                text = "Выйти",
-                                fontSize = 12.sp,
-                                navigate = {
-                                    authUser.exit()
-                                    with(pref!!.edit()) {
-                                        putString("mail", "")
-                                        putString("password", "")
-                                        apply()
-                                    }
-
-                                    navigateBack()
-                                },
-                                modifier = Modifier
-                                    .padding(15.dp)
-                                    .height(25.dp)
-                            )
+//                            AdditionalButton(
+//                                text = "Выйти",
+//                                fontSize = 12.sp,
+//                                navigate = {
+//                                    authUser.exit()
+//                                    with(pref!!.edit()) {
+//                                        putString("mail", "")
+//                                        putString("password", "")
+//                                        apply()
+//                                    }
+//
+//                                    navigateBack()
+//                                },
+//                                modifier = Modifier
+//                                    .padding(15.dp)
+//                                    .height(25.dp)
+//                            )
                         }
                     }
                 }
@@ -204,5 +203,3 @@ fun SettingsPage(
                 }
             }
         }
-    }
-}

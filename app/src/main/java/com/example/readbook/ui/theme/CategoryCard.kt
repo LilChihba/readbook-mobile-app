@@ -17,13 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.readbook.models.ApiClient
+import com.example.readbook.models.Book
 import com.example.readbook.models.CardItem
-import com.example.readbook.repository.BookRepository
 
 @Composable
 fun CategoryCard(
     card: CardItem,
-    navController: NavHostController
+    navController: NavHostController,
+    listBooks: MutableList<Book>?,
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -58,25 +60,23 @@ fun CategoryCard(
                 )
             }
 
-            val bookRepository = BookRepository()
-            val getAllData = bookRepository.getAllData()
-
             Box(
                 modifier = Modifier
                     .padding(top = 150.dp, bottom = 8.dp)
             ) {
-                LazyRow {
-                    items(
-                        count = getAllData.size,
-                        key = {
-                            getAllData[it].id
-                        },
-                        itemContent = { index ->
-                            val bookItemData = getAllData[index]
-                            ButtonBookCategory(book = bookItemData, navController = navController)
-                        }
-                    )
-                }
+                if(listBooks != null)
+                    LazyRow {
+                        items(
+                            count = 5,
+                            key = {
+                                listBooks[it].uid
+                            },
+                            itemContent = { index ->
+                                val bookItemData = listBooks[index]
+                                ButtonBookCategory(book = bookItemData, navController = navController)
+                            }
+                        )
+                    }
             }
         }
     }

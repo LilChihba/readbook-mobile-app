@@ -13,13 +13,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.readbook.models.Book
 import com.example.readbook.models.CardItem
 import com.example.readbook.ui.theme.CategoryCard
 import com.example.readbook.ui.theme.Milk
 
 @Composable
 fun HomePage(
-    navController: NavHostController
+    navController: NavHostController,
+    listBooks: MutableList<Book>?
 ) {
     val listCard = listOf(
         CardItem.NewBooks,
@@ -48,7 +50,7 @@ fun HomePage(
                 },
                 itemContent = { index ->
                     val cardItemData = listCard[index]
-                    CategoryCard(card = cardItemData, navController = navController)
+                    CategoryCard(card = cardItemData, navController = navController, listBooks = listBooks)
                 }
             )
         }

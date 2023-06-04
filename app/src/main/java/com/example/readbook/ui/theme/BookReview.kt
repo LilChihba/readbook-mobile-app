@@ -22,72 +22,71 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
-import com.example.readbook.models.Review
 
 
-@Composable
-fun BookReview(
-    review: Review
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 20.dp)
-    ) {
-        Row {
-            Image(
-                painter = painterResource(id = R.drawable.avatar_male),
-                contentDescription = "avatar",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-            )
-
-            Text(
-                text = review.nickname,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(start = 10.dp, top = 10.dp)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .padding(top = 8.dp, bottom = 5.dp)
-        ) {
-            RatingBar(
-                rating = review.rating,
-                modifier = Modifier
-                    .width(18.dp)
-                    .height(18.dp)
-            )
-            Text(
-                text = review.date,
-                fontSize = 10.sp,
-                color = Blue,
-                modifier = Modifier
-                    .padding(start = 5.dp, top = 2.dp)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-        ) {
-            Text(
-                text = review.content,
-                textAlign = TextAlign.Left,
-                color = DarkGray,
-                fontSize = 14.sp
-            )
-        }
-        Row(
-            modifier = Modifier.width(100.dp)
-        ) {
-            Divider(
-                color = Color.Gray,
-                thickness = (0.25).dp
-            )
-        }
-    }
-}
+//@Composable
+//fun BookReview(
+//    review: Review
+//) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(bottom = 20.dp)
+//    ) {
+//        Row {
+//            Image(
+//                painter = painterResource(id = R.drawable.avatar_male),
+//                contentDescription = "avatar",
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .size(40.dp)
+//                    .clip(CircleShape)
+//            )
+//
+//            Text(
+//                text = review.nickname,
+//                color = Color.Black,
+//                fontWeight = FontWeight.Normal,
+//                fontSize = 14.sp,
+//                modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+//            )
+//        }
+//        Row(
+//            modifier = Modifier
+//                .padding(top = 8.dp, bottom = 5.dp)
+//        ) {
+//            RatingBar(
+//                rating = review.rating,
+//                modifier = Modifier
+//                    .width(18.dp)
+//                    .height(18.dp)
+//            )
+//            Text(
+//                text = review.date,
+//                fontSize = 10.sp,
+//                color = Blue,
+//                modifier = Modifier
+//                    .padding(start = 5.dp, top = 2.dp)
+//            )
+//        }
+//        Row(
+//            modifier = Modifier
+//                .padding(bottom = 8.dp)
+//        ) {
+//            Text(
+//                text = review.content,
+//                textAlign = TextAlign.Left,
+//                color = DarkGray,
+//                fontSize = 14.sp
+//            )
+//        }
+//        Row(
+//            modifier = Modifier.width(100.dp)
+//        ) {
+//            Divider(
+//                color = Color.Gray,
+//                thickness = (0.25).dp
+//            )
+//        }
+//    }
+//}

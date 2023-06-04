@@ -14,18 +14,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
+import java.io.BufferedReader
+import kotlin.concurrent.thread
 
 @Composable
 fun ButtonBookCategory(
     book: Book,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     Column(
         modifier = Modifier
@@ -33,7 +40,7 @@ fun ButtonBookCategory(
             .width(110.dp)
     ) {
         Button(
-            onClick = { navController.navigate("bookPage/" + book.id) },
+            onClick = {  navController.navigate("bookPage/" + book.uid) },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             contentPadding = PaddingValues(0.dp),
             shape = RoundedCornerShape(5.dp),
@@ -41,7 +48,7 @@ fun ButtonBookCategory(
                 .height(175.dp)
         ) {
             Image(
-                painter = painterResource(id = book.image),
+                bitmap = book.cover.asImageBitmap(),
                 contentDescription = "Book",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -52,7 +59,7 @@ fun ButtonBookCategory(
         Column(
             modifier = Modifier.padding(top = 7.dp)
         ) {
-            RatingBar(rating = book.rating.toInt())
+            RatingBar(rating = book.score.toInt())
             Text(
                 text = book.title,
                 color = Color.Black,
@@ -62,10 +69,10 @@ fun ButtonBookCategory(
                 softWrap = false
             )
             Text(
-                text = book.author,
+                text = book.getAuthorsString(),
                 color = Color.Black,
                 fontSize = 10.sp,
-                softWrap = false
+                softWrap = true
             )
         }
     }

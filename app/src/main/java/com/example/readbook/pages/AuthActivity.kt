@@ -1,6 +1,7 @@
 package com.example.readbook.pages
 
 import android.content.SharedPreferences
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,12 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,8 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.models.ApiClient
-import com.example.readbook.models.AuthUser
-import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
@@ -34,6 +35,7 @@ import com.example.readbook.ui.theme.PassBox
 import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 
@@ -41,10 +43,10 @@ import kotlin.concurrent.thread
 @Composable
 fun AuthPage(
     pref: SharedPreferences?,
-    authUser: AuthUser,
+//    authUser: AuthUser,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
-    listUsers: MutableList<User>,
+//    listUsers: MutableList<User>,
     navigateToRegPage: () -> Unit,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
@@ -53,6 +55,7 @@ fun AuthPage(
     val textEmail = remember{ mutableStateOf("") }
     val textPassword = remember{ mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -85,7 +88,6 @@ fun AuthPage(
                         modifier = Modifier.padding(bottom = 30.dp)
                     )
                 }
-
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ){
@@ -98,18 +100,29 @@ fun AuthPage(
                     ButtonApp(
                         text = "Вход",
                         navigate = {
-                            thread {
-                                ApiClient().auth(textEmail.value, textPassword.value)
+                            if(Patterns.EMAIL_ADDRESS.matcher(textEmail.value).matches()) {
+                                thread {
+                                    ApiClient().auth(textEmail.value, textPassword.value)
+                                }
+                                navigateBackToProfile()
                             }
-                            navigateBackToProfile()
+                            else {
+                                colorSnackBar.value = Color.Red
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Введите корректную почту!",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
                         },
                         snackbarHostState = snackbarHostState,
                         colorSnackBar = colorSnackBar,
                         mail = textEmail.value,
                         password = textPassword.value,
                         pref = pref,
-                        authUser = authUser,
-                        listUsers = listUsers
+//                        authUser = authUser,
+//                        listUsers = listUsers
                     )
                     AdditionalButton(
                         text = "Забыл пароль",

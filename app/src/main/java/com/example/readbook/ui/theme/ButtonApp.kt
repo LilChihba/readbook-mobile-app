@@ -22,24 +22,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.readbook.mail.Code
 import com.example.readbook.mail.sendCodeInEmail
-import com.example.readbook.models.AuthUser
-import com.example.readbook.models.User
-import com.example.readbook.repository.UserRepository
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 @Composable
 fun ButtonApp(
     text: String,
-    navigate: () -> Unit? = {},
+    navigate: () -> Any? = {},
     navController: NavHostController? = null,
     mail: String = "",
     code: String = "",
     password: String = "",
     repeatPassword: String = "",
     pref: SharedPreferences? = null,
-    authUser: AuthUser? = null,
-    listUsers: MutableList<User>? = null,
+//    authUser: AuthUser? = null,
+//    listUsers: MutableList<User>? = null,
     snackbarHostState: SnackbarHostState? = null,
     colorSnackBar: MutableState<Color>? = null,
     modifier: Modifier = Modifier,
@@ -52,21 +49,21 @@ fun ButtonApp(
             when(text){
                 "Отправить письмо" -> {
                     if(mail != "") {
-                        if(UserRepository().getUserByMail(listUsers, mail = mail) != null) {
-                            thread {
-                                sendCodeInEmail(mail)
-                            }
-                            navController?.navigate("codePage/$mail")
-                        }
-                        else {
-                            colorSnackBar?.value = Color.Red
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Аккаунта с данной почтой не существует. Зарегистрируйтесь!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
+//                        if(UserRepository().getUserByMail(listUsers, mail = mail) != null) {
+//                            thread {
+//                                sendCodeInEmail(mail)
+//                            }
+//                            navController?.navigate("codePage/$mail")
+//                        }
+//                        else {
+//                            colorSnackBar?.value = Color.Red
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Аккаунта с данной почтой не существует. Зарегистрируйтесь!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
                     }
                     else {
                         colorSnackBar?.value = Color.Red
@@ -103,30 +100,30 @@ fun ButtonApp(
                 }
                 "Сменить пароль" -> {
                     if(password != "" && repeatPassword != "")
-                        if(password == repeatPassword) {
-                            UserRepository().updatePass(
-                                listUsers!!,
-                                mail,
-                                password
-                            )
-                            navigate()
-                            colorSnackBar?.value = Color.Green
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Вы успешно сменили пароль!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                        else {
-                            colorSnackBar?.value = Color.Red
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Пароли не совпадают, повторите попытку!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
+//                        if(password == repeatPassword) {
+//                            UserRepository().updatePass(
+//                                listUsers!!,
+//                                mail,
+//                                password
+//                            )
+//                            navigate()
+//                            colorSnackBar?.value = Color.Green
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Вы успешно сменили пароль!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
+//                        else {
+//                            colorSnackBar?.value = Color.Red
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Пароли не совпадают, повторите попытку!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
                     else {
                         colorSnackBar?.value = Color.Red
                         scope.launch {
@@ -137,7 +134,7 @@ fun ButtonApp(
                         }
                     }
                 }
-//                "Вход" -> {
+//               "Вход" -> {
 //                    if(password != "" && mail != "") {
 //                        authUser?.auth(listUsers!!, mail, password)
 //                        if(authUser!!.auth) {
@@ -177,31 +174,31 @@ fun ButtonApp(
 //                }
                 "Зарегистрироваться" -> {
                     if(password != "" && mail != "") {
-                        if(UserRepository().registerUser(listUsers!!, mail, password)) {
-                            authUser?.auth(listUsers, mail, password)
-                            with(pref!!.edit()) {
-                                putString("mail", mail)
-                                putString("password", password)
-                                apply()
-                            }
-                            navigate()
-                            colorSnackBar?.value = Color.Green
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Вы успешно зарегистрировались!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                        else {
-                            colorSnackBar?.value = Color.Red
-                            scope.launch {
-                                snackbarHostState?.showSnackbar(
-                                    message = "Аккаунт с данной почтой уже зарегистрирован!",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
+//                        if(UserRepository().registerUser(listUsers!!, mail, password)) {
+//                            authUser?.auth(listUsers, mail, password)
+//                            with(pref!!.edit()) {
+//                                putString("mail", mail)
+//                                putString("password", password)
+//                                apply()
+//                            }
+//                            navigate()
+//                            colorSnackBar?.value = Color.Green
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Вы успешно зарегистрировались!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
+//                        else {
+//                            colorSnackBar?.value = Color.Red
+//                            scope.launch {
+//                                snackbarHostState?.showSnackbar(
+//                                    message = "Аккаунт с данной почтой уже зарегистрирован!",
+//                                    duration = SnackbarDuration.Short
+//                                )
+//                            }
+//                        }
                     }
                     else {
                         colorSnackBar?.value = Color.Red

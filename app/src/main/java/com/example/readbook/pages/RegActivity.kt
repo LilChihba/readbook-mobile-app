@@ -23,8 +23,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readbook.models.AuthUser
-import com.example.readbook.models.User
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
@@ -36,8 +34,8 @@ import com.example.readbook.ui.theme.TopNavigationBar
 @Composable
 fun RegPage(
     pref: SharedPreferences?,
-    authUser: AuthUser,
-    listUsers: MutableList<User>,
+//    authUser: AuthUser,
+//    listUsers: MutableList<User>,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
@@ -86,17 +84,17 @@ fun RegPage(
                     TextForField(text = "Пароль")
                     PassBox(textPass = textPassword)
 
-                    ButtonApp(
-                        text = "Зарегистрироваться",
-                        navigate = navigateBackToProfile,
-                        snackbarHostState = snackbarHostState,
-                        colorSnackBar = colorSnackBar,
-                        mail = textEmail.value,
-                        password = textPassword.value,
-                        pref = pref,
-                        authUser = authUser,
-                        listUsers = listUsers
-                    )
+//                    ButtonApp(
+//                        text = "Зарегистрироваться",
+//                        navigate = navigateBackToProfile,
+//                        snackbarHostState = snackbarHostState,
+//                        colorSnackBar = colorSnackBar,
+//                        mail = textEmail.value,
+//                        password = textPassword.value,
+//                        pref = pref,
+//                        authUser = authUser,
+//                        listUsers = listUsers
+//                    )
                 }
             }
         }

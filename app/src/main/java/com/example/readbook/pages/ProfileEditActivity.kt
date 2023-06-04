@@ -40,7 +40,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readbook.models.AuthUser
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
@@ -51,14 +50,14 @@ import com.example.readbook.ui.theme.TopNavigationBar
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileEditPage(
-    authUser: AuthUser,
+//    authUser: AuthUser,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val textFName = remember { mutableStateOf(authUser.firstName) }
-    val textMName = remember { mutableStateOf(authUser.middleName) }
-    val textLName = remember { mutableStateOf(authUser.lastName) }
+//    val textFName = remember { mutableStateOf(authUser.firstName) }
+//    val textMName = remember { mutableStateOf(authUser.middleName) }
+//    val textLName = remember { mutableStateOf(authUser.lastName) }
     val textOldPass = remember { mutableStateOf("") }
     val textNewPass = remember { mutableStateOf("") }
     
@@ -147,12 +146,12 @@ fun ProfileEditPage(
                             modifier = Modifier
                                 .padding(top = 20.dp, bottom = 10.dp)
                         )
-                        TextForField(text = "Имя")
-                        TextBox(text = textFName)
-                        TextForField(text = "Фамилия")
-                        TextBox(text = textLName)
-                        TextForField(text = "Отчество")
-                        TextBox(text = textMName)
+//                        TextForField(text = "Имя")
+//                        TextBox(text = textFName)
+//                        TextForField(text = "Фамилия")
+//                        TextBox(text = textLName)
+//                        TextForField(text = "Отчество")
+//                        TextBox(text = textMName)
 
                         AdditionalButton(
                             text = "Сохранить",
@@ -180,14 +179,14 @@ fun ProfileEditPage(
                                 .padding(top = 20.dp, bottom = 10.dp)
                         )
 
-                        Text(
-                            text = authUser.mail,
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier
-                                .padding(bottom = 20.dp)
-                        )
+//                        Text(
+//                            text = authUser.mail,
+//                            color = Color.Black,
+//                            fontSize = 16.sp,
+//                            fontWeight = FontWeight.Normal,
+//                            modifier = Modifier
+//                                .padding(bottom = 20.dp)
+//                        )
                     }
                 }
 

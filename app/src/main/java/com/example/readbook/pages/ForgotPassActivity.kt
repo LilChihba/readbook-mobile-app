@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.readbook.models.User
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
@@ -36,7 +35,7 @@ private var textEmail: MutableState<String> = mutableStateOf("")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage(
-    listUsers: MutableList<User>,
+//    listUsers: MutableList<User>,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
@@ -91,7 +90,7 @@ fun ForgotPassPage(
                         text = "Отправить письмо",
                         navController = navController,
                         mail = textEmail.value,
-                        listUsers = listUsers,
+//                        listUsers = listUsers,
                         snackbarHostState = snackbarHostState,
                         colorSnackBar = colorSnackBar
                     )
@@ -173,7 +172,7 @@ fun ForgotPassPage_Code(
 @Composable
 fun ForgotPassPage_ChangePass(
     mail: String?,
-    listUsers: MutableList<User>,
+//    listUsers: MutableList<User>,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
@@ -232,7 +231,7 @@ fun ForgotPassPage_ChangePass(
                 ButtonApp(
                     text = "Сменить пароль",
                     mail = mail.toString(),
-                    listUsers = listUsers,
+//                    listUsers = listUsers,
                     password = textPass.value,
                     repeatPassword = repeatTextPass.value,
                     navigate = navigateToAuthPage,
