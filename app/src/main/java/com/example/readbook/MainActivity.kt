@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ReadbookTheme {
-                pref = getSharedPreferences("User", Context.MODE_PRIVATE)
+                pref = getSharedPreferences("Token", Context.MODE_PRIVATE)
 //                RuStoreBillingClient.checkPurchasesAvailability(context)
 //                    .addOnSuccessListener { result ->
 //                        when (result) {

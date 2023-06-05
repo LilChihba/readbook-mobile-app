@@ -1,7 +1,9 @@
 package com.example.readbook.pages
 
 import android.content.SharedPreferences
+import android.os.Build
 import android.util.Patterns
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -28,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.models.ApiClient
+import com.example.readbook.models.Token
+import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
@@ -36,17 +40,19 @@ import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
 import kotlinx.coroutines.launch
+import java.time.Instant
 import kotlin.concurrent.thread
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuthPage(
+    user: User,
+    token: Token,
     pref: SharedPreferences?,
-//    authUser: AuthUser,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
-//    listUsers: MutableList<User>,
     navigateToRegPage: () -> Unit,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
@@ -101,9 +107,42 @@ fun AuthPage(
                         text = "Вход",
                         navigate = {
                             if(Patterns.EMAIL_ADDRESS.matcher(textEmail.value).matches()) {
-                                thread {
-                                    ApiClient().auth(textEmail.value, textPassword.value)
+                                val th = thread {
+                                    val tokenJSON = ApiClient().auth(textEmail.value, textPassword.value) as Token
+                                    with(token) {
+                                        accessToken = tokenJSON.accessToken
+                                        accessTokenExpiresIn = tokenJSON.accessTokenExpiresIn
+                                        refreshToken = tokenJSON.refreshToken
+                                        refreshTokenExpiresIn = tokenJSON.refreshTokenExpiresIn
+                                        date = Instant.now()
+                                    }
+                                    val userJSON = ApiClient().getMe(token) as User
+                                    with(user) {
+                                        username = userJSON.username
+                                        firstName = userJSON.firstName
+                                        secondName = userJSON.secondName
+                                        lastName = userJSON.lastName
+                                        avatar = ApiClient().getMeAvatar(user.username)
+                                        email = ApiClient().getMeEmail(user.username, token)!!.email
+                                    }
+                                    with(pref!!.edit()) {
+                                        putString("accessToken", token.accessToken)
+                                        putInt("accessTokenExpiresIn", token.accessTokenExpiresIn)
+                                        putString("refreshToken", token.refreshToken)
+                                        putInt("refreshTokenExpiresIn", token.refreshTokenExpiresIn)
+                                        putLong("date", token.date.toEpochMilli())
+                                        apply()
+                                    }
+
+                                    colorSnackBar.value = Color.Green
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Вы успешно авторизовались!",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
                                 }
+                                th.join()
                                 navigateBackToProfile()
                             }
                             else {
@@ -120,9 +159,7 @@ fun AuthPage(
                         colorSnackBar = colorSnackBar,
                         mail = textEmail.value,
                         password = textPassword.value,
-                        pref = pref,
-//                        authUser = authUser,
-//                        listUsers = listUsers
+                        pref = pref
                     )
                     AdditionalButton(
                         text = "Забыл пароль",
@@ -143,47 +180,3 @@ fun AuthPage(
         }
     }
 }
-
-//fun Auth(
-//    mail: String,
-//    password: String
-//) {
-//    val authURL = URL(Url.AUTH_URL)
-//
-//    var reqParam = URLEncoder.encode("grant_type", "UTF-8") + "=" + URLEncoder.encode("password", "UTF-8")
-//    reqParam += "&" + URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(mail, "UTF-8")
-//    reqParam += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8")
-//
-//    val userCredentials = "test-client:test-client"
-//
-//    val basicAuth = "Basic " + String(Base64.encode(userCredentials.toByteArray(), 0))
-//
-//    with(authURL.openConnection() as HttpURLConnection) {
-//        requestMethod = "POST"
-//        setRequestProperty("Authorization", basicAuth)
-//
-//        val owr = OutputStreamWriter(outputStream)
-//        owr.write(reqParam)
-//        owr.flush()
-//        owr.close()
-//
-//        Log.v("AuthHTTP", "$url")
-//        Log.v("AuthHTTP", "$responseCode + $responseMessage")
-//
-//        val br = BufferedReader(
-//            InputStreamReader(
-//                inputStream
-//            )
-//        )
-//
-//        var output: String?
-//        println("Output from Server .... \n")
-//        while (br.readLine().also { output = it } != null) {
-//            println(output)
-//            val gson = GsonBuilder()
-//                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-//                .create()
-////            token = gson.fromJson(output, Token::class.java)
-//        }
-//    }
-//}

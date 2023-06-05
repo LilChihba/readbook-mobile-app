@@ -1,6 +1,5 @@
 package com.example.readbook.models
 
-import android.graphics.Bitmap
 import com.example.readbook.models.dto.book.AuthorDto
 import com.example.readbook.models.dto.book.DiscountDto
 import com.example.readbook.models.dto.book.GenreDto
@@ -28,8 +27,7 @@ data class Book (
     val score: Double,
     val originalPriceRub: BigDecimal,
     val salePrice: BigDecimal,
-    val discounts: Set<DiscountDto>,
-    var cover: Bitmap
+    val discounts: Set<DiscountDto>
 ) {
     fun getAuthorsString(): String {
         val authorNames: MutableList<String?> = ArrayList()

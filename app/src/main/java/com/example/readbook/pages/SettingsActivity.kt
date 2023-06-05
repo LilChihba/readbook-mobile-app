@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
+import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.Gray
@@ -37,7 +38,7 @@ import com.example.readbook.ui.theme.Milk
 
 @Composable
 fun SettingsPage(
-//    authUser: AuthUser,
+    user: User,
     pref: SharedPreferences?,
     navigateToAuthPage: () -> Unit,
     navigateBack: () -> Unit,

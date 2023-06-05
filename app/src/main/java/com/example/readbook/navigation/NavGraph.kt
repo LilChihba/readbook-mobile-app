@@ -2,6 +2,8 @@ package com.example.readbook.navigation
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -14,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
+import com.example.readbook.models.Token
+import com.example.readbook.models.User
 import com.example.readbook.pages.AuthPage
 import com.example.readbook.pages.BookPage
 import com.example.readbook.pages.ForgotPassPage
@@ -28,8 +32,11 @@ import com.example.readbook.pages.SearchPage
 import com.example.readbook.pages.SettingsPage
 import com.example.readbook.ui.theme.DarkGray
 import com.example.readbook.ui.theme.SnackbarCustom
+import java.io.IOException
+import java.time.Instant
 import kotlin.concurrent.thread
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun NavGraph(
@@ -40,18 +47,99 @@ fun NavGraph(
     var getBooks: Any?
     var getListBooks: List<Book>?
     val mutableListBooks: MutableList<Book> = remember { mutableListOf() }
+    val user = User()
+
+    val token = Token(
+        pref!!.getString("accessToken", "").toString(),
+        pref.getInt("accessTokenExpiresIn", 0),
+        pref.getString("refreshToken", "").toString(),
+        pref.getInt("refreshTokenExpiresIn", 0),
+    )
 
     val th = thread {
         getBooks = apiClient.getBooks()
         if(getBooks is List<*>){
             getListBooks = (getBooks as List<*>).filterIsInstance<Book>()
             for(i in getListBooks!!) {
-                i.cover = apiClient.getCoverBook(i.uid)!!
+//                i.cover = apiClient.getCoverBook(i.uid)!!
                 mutableListBooks.add(i)
             }
         }
+
+        try {
+            val userJSON = ApiClient().getMe(token) as User
+            with(user) {
+                username = userJSON.username
+                firstName = userJSON.firstName
+                secondName = userJSON.secondName
+                lastName = userJSON.lastName
+                avatar = ApiClient().getMeAvatar(user.username)
+                email = ApiClient().getMeEmail(user.username, token)!!.email
+            }
+        } catch (e: IOException) {
+            val nowDate = Instant.now()
+            if(token.date.plusSeconds(token.accessTokenExpiresIn.toLong()) < nowDate)
+                try {
+                    if(token.date.plusSeconds(token.refreshTokenExpiresIn.toLong()) < nowDate) {
+                        val newToken = ApiClient().updateToken(token) as Token
+                        with(token) {
+                            accessToken = newToken.accessToken
+                            accessTokenExpiresIn = newToken.accessTokenExpiresIn
+                            refreshToken = newToken.refreshToken
+                            refreshTokenExpiresIn = newToken.refreshTokenExpiresIn
+                            date = Instant.now()
+                        }
+
+                        with(pref.edit()) {
+                            putString("accessToken", token.accessToken)
+                            putInt("accessTokenExpiresIn", token.accessTokenExpiresIn)
+                            putString("refreshToken", token.refreshToken)
+                            putInt("refreshTokenExpiresIn", token.refreshTokenExpiresIn)
+                            putLong("date", token.date.toEpochMilli())
+                            apply()
+                        }
+
+                        val userJSON = ApiClient().getMe(token) as User
+                        with(user) {
+                            username = userJSON.username
+                            firstName = userJSON.firstName
+                            secondName = userJSON.secondName
+                            lastName = userJSON.lastName
+                            avatar = ApiClient().getMeAvatar(user.username)
+                            email = ApiClient().getMeEmail(user.username, token)!!.email
+                        }
+                    } else {
+                        with(token) {
+                            accessToken = ""
+                            accessTokenExpiresIn = 0
+                            refreshToken = ""
+                            refreshTokenExpiresIn = 0
+                            date = Instant.ofEpochMilli(0)
+                        }
+
+                        with(pref.edit()) {
+                            putString("accessToken", token.accessToken)
+                            putInt("accessTokenExpiresIn", token.accessTokenExpiresIn)
+                            putString("refreshToken", token.refreshToken)
+                            putInt("refreshTokenExpiresIn", token.refreshTokenExpiresIn)
+                            putLong("date", token.date.toEpochMilli())
+                            apply()
+                        }
+                    }
+                } catch (e: IOException) {
+                    with(pref.edit()) {
+                        putString("accessToken", "")
+                        putInt("accessTokenExpiresIn", 0)
+                        putString("refreshToken", "")
+                        putInt("refreshTokenExpiresIn", 0)
+                        putLong("date", Instant.ofEpochMilli(0).toEpochMilli())
+                        apply()
+                    }
+                }
+            return@thread
+        }
     }
-//    val mutableListBooks = getListBooks?.toMutableList()
+
 //    val listUsers = UserRepository().getAllData()
 //    val listLibraryBooks = BookLibraryRepository().getAllData()
 //    val mail = pref!!.getString("mail", "")
@@ -84,7 +172,8 @@ fun NavGraph(
 
             composable(route = Route.profilePage) {
                 ProfilePage(
-//                    authUser = authUser,
+                    user = user,
+                    token = token,
                     navigateToSettingsPage = { navController.navigate(Route.settingsPage) },
                     navigateToAuthPage = { navController.navigate(Route.authPage) }
                 )
@@ -92,7 +181,7 @@ fun NavGraph(
 
             composable(route = Route.settingsPage) {
                 SettingsPage(
-//                    authUser = authUser,
+                    user = user,
                     pref = pref,
                     navigateToAuthPage = { navController.navigate(Route.authPage) },
                     navigateBack = { navController.popBackStack() },
@@ -102,11 +191,11 @@ fun NavGraph(
 
             composable(route = Route.authPage) {
                 AuthPage(
+                    user = user,
+                    token = token,
                     pref = pref,
                     snackbarHostState = snackbarHostState,
-//                    authUser = authUser,
                     colorSnackBar = colorSnackBar,
-//                    listUsers = listUsers,
                     navigateToRegPage = { navController.navigate(Route.regPage) },
                     navigateBack = { navController.popBackStack() },
                     navigateBackToProfile = { navController.popBackStack(
