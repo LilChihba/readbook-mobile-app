@@ -1,11 +1,18 @@
 package com.example.readbook.pages
 
-import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -16,27 +23,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.readbook.R
+import com.example.readbook.models.ApiClient
+import com.example.readbook.models.Book
+import com.example.readbook.models.Token
+import com.example.readbook.ui.theme.ButtonBook
 import com.example.readbook.ui.theme.Gray
 import com.example.readbook.ui.theme.Milk
+import java.time.Instant
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LibraryPage(
+    token: Token,
+    apiClient: ApiClient,
     navController: NavHostController,
-//    listLibraryBooks: MutableList<BookLibrary>,
-//    authUser: AuthUser
+    listLibraryBooks: MutableList<Book>,
 ) {
     val count = remember{ mutableStateOf(0) }
-//    val listBooks: MutableList<BookLibrary> = mutableListOf()
-//    for(i in listLibraryBooks)
-//        if(i.id_user == authUser.id)
-//            listBooks.add(i)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,31 +75,44 @@ fun LibraryPage(
                 .padding(bottom = 20.dp)
                 .alpha(if(count.value == 0) 0F else 1F)
         ) {
-//            LazyVerticalGrid(
-//                columns = GridCells.Adaptive(minSize = 110.dp),
-//                contentPadding = PaddingValues(start = 10.dp, top = 10.dp),
-//                horizontalArrangement = Arrangement.Start
-//            ) {
-//                items(
-//                    count = listBooks.size,
-//                    key = {
-//                        listBooks[it].id
-//                    },
-//                    itemContent = { index ->
-//                        val bookItemData = listBooks[index]
-//                        ButtonBook(bookItemData, navController = navController)
-//                        count.value += 1
-//                    }
-//                )
-//            }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 110.dp),
+                contentPadding = PaddingValues(start = 10.dp, top = 10.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                items(
+                    count = listLibraryBooks.size,
+                    key = {
+                        listLibraryBooks[it].uuid
+                    },
+                    itemContent = { index ->
+                        val bookItemData = listLibraryBooks[index]
+                        ButtonBook(
+                            bookItemData,
+                            navController = navController,
+                            token = token,
+                            apiClient = apiClient
+                        )
+                        count.value += 1
+                    }
+                )
+            }
         }
         if(count.value == 0)
         {
-            Image(
-                painter = painterResource(id = R.drawable.empty_library),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(R.drawable.empty_library)
+                    .crossfade(true)
+                    .diskCacheKey("empty_library_${Instant.now()}")
+                    .build(),
                 contentDescription = "img",
+                contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
-                contentScale = ContentScale.Crop
+                filterQuality = FilterQuality.High,
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(135.dp)
             )
             Text(
                 text = "У вас нет купленных книг",

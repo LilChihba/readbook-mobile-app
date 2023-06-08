@@ -1,5 +1,7 @@
 package com.example.readbook.pages
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +15,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
 import com.example.readbook.models.CardItem
+import com.example.readbook.models.Token
 import com.example.readbook.ui.theme.CategoryCard
 import com.example.readbook.ui.theme.Milk
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(
     navController: NavHostController,
-    listBooks: MutableList<Book>?
+    listBooks: MutableList<Book>?,
+    apiClient: ApiClient,
+    token: Token,
 ) {
     val listCard = listOf(
         CardItem.NewBooks,
@@ -50,7 +57,13 @@ fun HomePage(
                 },
                 itemContent = { index ->
                     val cardItemData = listCard[index]
-                    CategoryCard(card = cardItemData, navController = navController, listBooks = listBooks)
+                    CategoryCard(
+                        card = cardItemData,
+                        navController = navController,
+                        listBooks = listBooks,
+                        apiClient = apiClient,
+                        token = token
+                    )
                 }
             )
         }

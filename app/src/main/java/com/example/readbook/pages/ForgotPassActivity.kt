@@ -88,11 +88,6 @@ fun ForgotPassPage(
 
                     ButtonApp(
                         text = "Отправить письмо",
-                        navController = navController,
-                        mail = textEmail.value,
-//                        listUsers = listUsers,
-                        snackbarHostState = snackbarHostState,
-                        colorSnackBar = colorSnackBar
                     )
                 }
             }
@@ -157,11 +152,6 @@ fun ForgotPassPage_Code(
 
                 ButtonApp(
                     text = "Проверить код",
-                    navController = navController,
-                    code = textCode.value,
-                    mail = mail.toString(),
-                    snackbarHostState = snackbarHostState,
-                    colorSnackBar = colorSnackBar
                 )
             }
         }
@@ -230,13 +220,6 @@ fun ForgotPassPage_ChangePass(
 
                 ButtonApp(
                     text = "Сменить пароль",
-                    mail = mail.toString(),
-//                    listUsers = listUsers,
-                    password = textPass.value,
-                    repeatPassword = repeatTextPass.value,
-                    navigate = navigateToAuthPage,
-                    snackbarHostState = snackbarHostState,
-                    colorSnackBar = colorSnackBar
                 )
             }
         }

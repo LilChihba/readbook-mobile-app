@@ -1,6 +1,7 @@
 package com.example.readbook.navigation
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -9,6 +10,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,8 +20,10 @@ import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
 import com.example.readbook.models.Token
 import com.example.readbook.models.User
+import com.example.readbook.models.fromJson
 import com.example.readbook.pages.AuthPage
 import com.example.readbook.pages.BookPage
+import com.example.readbook.pages.CodePage
 import com.example.readbook.pages.ForgotPassPage
 import com.example.readbook.pages.ForgotPassPage_ChangePass
 import com.example.readbook.pages.ForgotPassPage_Code
@@ -47,7 +51,15 @@ fun NavGraph(
     var getBooks: Any?
     var getListBooks: List<Book>?
     val mutableListBooks: MutableList<Book> = remember { mutableListOf() }
+
+    var getLibraryBooks: Any?
+    var getListLibraryBooks: List<Book>?
+    val mutableListLibraryBooks: MutableList<Book> = remember { mutableListOf() }
+
     val user = User()
+    val snackbarHostState = SnackbarHostState()
+    val colorSnackBar = remember { mutableStateOf(DarkGray) }
+    val activity = (LocalContext.current as? Activity)
 
     val token = Token(
         pref!!.getString("accessToken", "").toString(),
@@ -56,113 +68,57 @@ fun NavGraph(
         pref.getInt("refreshTokenExpiresIn", 0),
     )
 
-    val th = thread {
+    thread {
         getBooks = apiClient.getBooks()
         if(getBooks is List<*>){
             getListBooks = (getBooks as List<*>).filterIsInstance<Book>()
             for(i in getListBooks!!) {
-//                i.cover = apiClient.getCoverBook(i.uid)!!
                 mutableListBooks.add(i)
             }
         }
 
         try {
-            val userJSON = ApiClient().getMe(token) as User
-            with(user) {
-                username = userJSON.username
-                firstName = userJSON.firstName
-                secondName = userJSON.secondName
-                lastName = userJSON.lastName
-                avatar = ApiClient().getMeAvatar(user.username)
-                email = ApiClient().getMeEmail(user.username, token)!!.email
+            user.copy(apiClient.getMe(token) as User, token, apiClient)
+            getLibraryBooks = apiClient.getLibraryBooks(token)
+            if(getLibraryBooks is List<*>){
+                getListLibraryBooks = (getLibraryBooks as List<*>).filterIsInstance<Book>()
+                for(i in getListLibraryBooks!!) {
+                    mutableListLibraryBooks.add(i)
+                }
             }
         } catch (e: IOException) {
             val nowDate = Instant.now()
-            if(token.date.plusSeconds(token.accessTokenExpiresIn.toLong()) < nowDate)
+            if(token.isAccessTokenExpired(nowDate))
                 try {
-                    if(token.date.plusSeconds(token.refreshTokenExpiresIn.toLong()) < nowDate) {
-                        val newToken = ApiClient().updateToken(token) as Token
-                        with(token) {
-                            accessToken = newToken.accessToken
-                            accessTokenExpiresIn = newToken.accessTokenExpiresIn
-                            refreshToken = newToken.refreshToken
-                            refreshTokenExpiresIn = newToken.refreshTokenExpiresIn
-                            date = Instant.now()
-                        }
-
-                        with(pref.edit()) {
-                            putString("accessToken", token.accessToken)
-                            putInt("accessTokenExpiresIn", token.accessTokenExpiresIn)
-                            putString("refreshToken", token.refreshToken)
-                            putInt("refreshTokenExpiresIn", token.refreshTokenExpiresIn)
-                            putLong("date", token.date.toEpochMilli())
-                            apply()
-                        }
-
-                        val userJSON = ApiClient().getMe(token) as User
-                        with(user) {
-                            username = userJSON.username
-                            firstName = userJSON.firstName
-                            secondName = userJSON.secondName
-                            lastName = userJSON.lastName
-                            avatar = ApiClient().getMeAvatar(user.username)
-                            email = ApiClient().getMeEmail(user.username, token)!!.email
-                        }
-                    } else {
-                        with(token) {
-                            accessToken = ""
-                            accessTokenExpiresIn = 0
-                            refreshToken = ""
-                            refreshTokenExpiresIn = 0
-                            date = Instant.ofEpochMilli(0)
-                        }
-
-                        with(pref.edit()) {
-                            putString("accessToken", token.accessToken)
-                            putInt("accessTokenExpiresIn", token.accessTokenExpiresIn)
-                            putString("refreshToken", token.refreshToken)
-                            putInt("refreshTokenExpiresIn", token.refreshTokenExpiresIn)
-                            putLong("date", token.date.toEpochMilli())
-                            apply()
-                        }
+                    if(token.isRefreshTokenExpired(nowDate)) {
+                        token.copy(apiClient.updateToken(token) as Token)
+                        user.copy(apiClient.getMe(token) as User, token, apiClient)
                     }
                 } catch (e: IOException) {
-                    with(pref.edit()) {
-                        putString("accessToken", "")
-                        putInt("accessTokenExpiresIn", 0)
-                        putString("refreshToken", "")
-                        putInt("refreshTokenExpiresIn", 0)
-                        putLong("date", Instant.ofEpochMilli(0).toEpochMilli())
-                        apply()
-                    }
+                    token.delete()
                 }
-            return@thread
+        } finally {
+            token.save(pref)
         }
-    }
+    }.join()
 
-//    val listUsers = UserRepository().getAllData()
-//    val listLibraryBooks = BookLibraryRepository().getAllData()
-//    val mail = pref!!.getString("mail", "")
-//    val password = pref.getString("password", "")
-//    val authUser = AuthUser().auth(listUsers, mail.toString(), password.toString())
-    val snackbarHostState = SnackbarHostState()
-    val colorSnackBar = remember { mutableStateOf(DarkGray) }
-
-    th.join()
     BoxWithConstraints {
         NavHost(navController = navController, startDestination = Route.homePage) {
             composable(Route.homePage){
                 HomePage(
                     navController = navController,
-                    listBooks = mutableListBooks
+                    listBooks = mutableListBooks,
+                    apiClient = apiClient,
+                    token = token
                 )
             }
 
             composable(Route.libraryPage){
                 LibraryPage(
-//                    authUser = authUser,
-//                    listLibraryBooks = listLibraryBooks,
-                    navController = navController
+                    listLibraryBooks = mutableListLibraryBooks,
+                    navController = navController,
+                    token = token,
+                    apiClient = apiClient
                 )
             }
 
@@ -182,7 +138,9 @@ fun NavGraph(
             composable(route = Route.settingsPage) {
                 SettingsPage(
                     user = user,
+                    token = token,
                     pref = pref,
+                    mutableListLibraryBooks = mutableListLibraryBooks,
                     navigateToAuthPage = { navController.navigate(Route.authPage) },
                     navigateBack = { navController.popBackStack() },
                     navigateToProfileEdit = { navController.navigate(Route.profileEditPage) }
@@ -194,6 +152,8 @@ fun NavGraph(
                     user = user,
                     token = token,
                     pref = pref,
+                    apiClient = apiClient,
+                    mutableListLibraryBooks = mutableListLibraryBooks,
                     snackbarHostState = snackbarHostState,
                     colorSnackBar = colorSnackBar,
                     navigateToRegPage = { navController.navigate(Route.regPage) },
@@ -208,9 +168,28 @@ fun NavGraph(
 
             composable(route = Route.regPage) {
                 RegPage(
+                    navController = navController,
+                    apiClient = apiClient,
+                    snackbarHostState = snackbarHostState,
+                    colorSnackBar = colorSnackBar,
+                    navigateBack = { navController.popBackStack() },
+                    navigateBackToProfile = { navController.popBackStack(
+                        route = Route.profilePage,
+                        inclusive = false
+                    ) }
+                )
+            }
+
+            composable(
+                route = Route.codeRegPage,
+                arguments = listOf(navArgument("mail") {
+                    type = NavType.StringType
+                })
+            ) {
+                CodePage(
+                    mail = it.arguments?.getString("mail"),
+                    apiClient = apiClient,
                     pref = pref,
-//                    authUser = authUser,
-//                    listUsers = listUsers,
                     snackbarHostState = snackbarHostState,
                     colorSnackBar = colorSnackBar,
                     navigateBack = { navController.popBackStack() },
@@ -223,7 +202,6 @@ fun NavGraph(
 
             composable(route = Route.forgotPassPage) {
                 ForgotPassPage(
-//                    listUsers = listUsers,
                     snackbarHostState = snackbarHostState,
                     colorSnackBar = colorSnackBar,
                     navigateBack = { navController.popBackStack() },
@@ -262,7 +240,6 @@ fun NavGraph(
             ) {
                 ForgotPassPage_ChangePass(
                     mail = it.arguments?.getString("mail"),
-//                    listUsers = listUsers,
                     snackbarHostState = snackbarHostState,
                     colorSnackBar = colorSnackBar,
                     navigateBack = { navController.popBackStack() },
@@ -276,25 +253,27 @@ fun NavGraph(
 
             composable(
                 route = Route.bookPage,
-                arguments = listOf(navArgument("id") {
-                    type = NavType.IntType
+                arguments = listOf(navArgument("book") {
+                    type = NavType.StringType
                 })
             ) {
-                BookPage(
-                    bookId = it.arguments?.getInt("id"),
-//                    authUser = authUser,
-//                    listBooks = listLibraryBooks,
-                    snackbarHostState = snackbarHostState,
-                    colorSnackBar = colorSnackBar,
-                    navigateBack = { navController.popBackStack() }
-                )
+                it.arguments?.getString("book")?.let { jsonString ->
+                    val book = jsonString.fromJson(Book::class.java)
+                    BookPage(
+                        book = book,
+                        apiClient = apiClient,
+                        token = token,
+                        snackbarHostState = snackbarHostState,
+                        colorSnackBar = colorSnackBar,
+                        navigateBack = { navController.popBackStack() }
+                    )
+                }
             }
 
             composable(
                 route = Route.profileEditPage
             ) {
                 ProfileEditPage(
-//                    authUser = authUser,
                     navigateBack = { navController.popBackStack() },
                     navigateBackToProfile = { navController.popBackStack(
                         route = Route.profilePage,
@@ -310,3 +289,18 @@ fun NavGraph(
         )
     }
 }
+
+//@Composable
+//fun dialog(activity: Activity?) {
+//    AlertDialog(
+//        onDismissRequest = { activity?.finish() },
+//        confirmButton = {},
+//        title = {}
+//    )
+//}
+//
+//@Composable
+//@Preview
+//fun dialogPreview() {
+//
+//}

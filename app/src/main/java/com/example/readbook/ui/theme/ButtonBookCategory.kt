@@ -2,7 +2,6 @@ package com.example.readbook.ui.theme
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,23 +16,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.readbook.R
 import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
-import java.io.BufferedReader
+import com.example.readbook.models.Token
+import com.example.readbook.models.URL.BASE_URL
+import com.example.readbook.models.toJson
 import java.time.Instant
 import kotlin.concurrent.thread
 
@@ -41,33 +39,35 @@ import kotlin.concurrent.thread
 @Composable
 fun ButtonBookCategory(
     book: Book,
+    apiClient: ApiClient,
+    token: Token,
     navController: NavHostController,
 ) {
+    val bookString = book.toJson()
     Column(
         modifier = Modifier
             .padding(start = 10.dp, end = 15.dp)
             .width(110.dp)
     ) {
         Button(
-            onClick = {  navController.navigate("bookPage/" + book.uid) },
+            onClick = {
+                thread {
+                    if(book.isBuyed == null)
+                        book.isBuyed = apiClient.checkBuy(book.uuid, accessToken = token.accessToken) == 200
+                }.join()
+                navController.navigate("bookPage/$bookString")
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             contentPadding = PaddingValues(0.dp),
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier
                 .height(175.dp)
         ) {
-//            Image(
-//                bitmap = book.cover.asImageBitmap(),
-//                contentDescription = "Book",
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier
-//                    .fillMaxSize()
-//            )
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://f466-85-95-178-202.ngrok-free.app/books/${book.uid}/cover")
+                    .data("$BASE_URL/books/${book.uuid}/cover")
                     .crossfade(true)
-                    .diskCacheKey("books_images_${Instant.now()}_${book.uid}")
+                    .diskCacheKey("books_images_${Instant.now()}_${book.uuid}")
                     .build(),
                 contentDescription = "ButtonBook",
                 contentScale = ContentScale.Crop,
@@ -88,13 +88,15 @@ fun ButtonBookCategory(
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(top = 3.dp),
-                softWrap = false
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = book.getAuthorsString(),
                 color = Color.Black,
                 fontSize = 10.sp,
-                softWrap = true
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

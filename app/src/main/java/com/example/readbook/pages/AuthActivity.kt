@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.models.ApiClient
+import com.example.readbook.models.Book
 import com.example.readbook.models.Token
 import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
@@ -40,7 +41,6 @@ import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
 import kotlinx.coroutines.launch
-import java.time.Instant
 import kotlin.concurrent.thread
 
 
@@ -50,6 +50,8 @@ import kotlin.concurrent.thread
 fun AuthPage(
     user: User,
     token: Token,
+    apiClient: ApiClient,
+    mutableListLibraryBooks: MutableList<Book>,
     pref: SharedPreferences?,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
@@ -105,33 +107,20 @@ fun AuthPage(
 
                     ButtonApp(
                         text = "Вход",
-                        navigate = {
+                        onClick = {
                             if(Patterns.EMAIL_ADDRESS.matcher(textEmail.value).matches()) {
                                 val th = thread {
-                                    val tokenJSON = ApiClient().auth(textEmail.value, textPassword.value) as Token
-                                    with(token) {
-                                        accessToken = tokenJSON.accessToken
-                                        accessTokenExpiresIn = tokenJSON.accessTokenExpiresIn
-                                        refreshToken = tokenJSON.refreshToken
-                                        refreshTokenExpiresIn = tokenJSON.refreshTokenExpiresIn
-                                        date = Instant.now()
-                                    }
-                                    val userJSON = ApiClient().getMe(token) as User
-                                    with(user) {
-                                        username = userJSON.username
-                                        firstName = userJSON.firstName
-                                        secondName = userJSON.secondName
-                                        lastName = userJSON.lastName
-                                        avatar = ApiClient().getMeAvatar(user.username)
-                                        email = ApiClient().getMeEmail(user.username, token)!!.email
-                                    }
-                                    with(pref!!.edit()) {
-                                        putString("accessToken", token.accessToken)
-                                        putInt("accessTokenExpiresIn", token.accessTokenExpiresIn)
-                                        putString("refreshToken", token.refreshToken)
-                                        putInt("refreshTokenExpiresIn", token.refreshTokenExpiresIn)
-                                        putLong("date", token.date.toEpochMilli())
-                                        apply()
+                                    token.copy(apiClient.auth(textEmail.value, textPassword.value) as Token)
+                                    user.copy(apiClient.getMe(token) as User, token, apiClient)
+                                    token.save(pref)
+
+                                    val getLibraryBooks = apiClient.getLibraryBooks(token)
+                                    val getListLibraryBooks: List<Book>?
+                                    if(getLibraryBooks is List<*>){
+                                        getListLibraryBooks = (getLibraryBooks as List<*>).filterIsInstance<Book>()
+                                        for(i in getListLibraryBooks) {
+                                            mutableListLibraryBooks.add(i)
+                                        }
                                     }
 
                                     colorSnackBar.value = Color.Green
@@ -155,11 +144,6 @@ fun AuthPage(
                                 }
                             }
                         },
-                        snackbarHostState = snackbarHostState,
-                        colorSnackBar = colorSnackBar,
-                        mail = textEmail.value,
-                        password = textPassword.value,
-                        pref = pref
                     )
                     AdditionalButton(
                         text = "Забыл пароль",

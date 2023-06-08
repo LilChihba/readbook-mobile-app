@@ -1,6 +1,7 @@
 package com.example.readbook.pages
 
-import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,19 +20,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.readbook.R
 import com.example.readbook.models.Token
 import com.example.readbook.models.User
 import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
+import java.time.Instant
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfilePage(
     user: User,
@@ -72,23 +80,21 @@ fun ProfilePage(
                     .padding(start = 45.dp, top = 10.dp, end = 45.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(user.avatar?.asImageBitmap() != null) {
-                    Image(
-                        bitmap = user.avatar!!.asImageBitmap(),
-                        contentDescription = "Avatar",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .size(250.dp)
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.avatar_male),
-                        contentDescription = "Avatar",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .size(250.dp)
-                    )
-                }
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(if(user.avatar?.asImageBitmap() != null) user.avatar else R.drawable.default_avatar)
+                        .crossfade(true)
+                        .diskCacheKey("avatar_user_${Instant.now()}")
+                        .build(),
+                    contentDescription = "Avatar",
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.default_avatar),
+                    error = painterResource(id = R.drawable.default_avatar),
+                    filterQuality = FilterQuality.High,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .size(250.dp)
+                )
 
                 Text(
                     text = user.username,
@@ -99,7 +105,7 @@ fun ProfilePage(
                 )
 
                 if(token?.accessToken == "")
-                    ButtonApp(text = "Вход или регистрация", navigate = navigateToAuthPage)
+                    ButtonApp(text = "Вход или регистрация", onClick = navigateToAuthPage)
             }
         }
     }
