@@ -23,26 +23,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.readbook.models.ApiClient
 import com.example.readbook.ui.theme.ButtonApp
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.PassBox
 import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
+import kotlin.concurrent.thread
 
 private var textEmail: MutableState<String> = mutableStateOf("")
+private var textUsername: MutableState<String> = mutableStateOf("")
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage(
-//    listUsers: MutableList<User>,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    apiClient: ApiClient
 ) {
     textEmail = remember { mutableStateOf("") }
+    textUsername = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -76,7 +80,7 @@ fun ForgotPassPage(
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                     Text(
-                        text = "Введите вашу почту, чтобы мы отправили письмо с дальнейшими инструкциями",
+                        text = "Введите ваше имя аккаунта и почту, чтобы мы отправили письмо с дальнейшими инструкциями",
                         color = Color.Black,
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
@@ -86,8 +90,19 @@ fun ForgotPassPage(
                     TextForField(text = "Почта")
                     TextBox(text = textEmail)
 
+                    TextForField(text = "Имя аккаунта")
+                    TextBox(text = textUsername)
+
                     ButtonApp(
                         text = "Отправить письмо",
+                        onClick = {
+                            var code = 404
+                            thread {
+                                code = apiClient.getCodeInEmail(textEmail.value, textUsername.value)
+                            }.join()
+                            if(code == 204)
+                                navController.navigate("codePage/${textEmail.value}")
+                        }
                     )
                 }
             }
@@ -98,14 +113,16 @@ fun ForgotPassPage(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ForgotPassPage_Code(
-    mail: String?,
+    apiClient: ApiClient,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
     navigateBackToProfile: () -> Unit,
-    navController: NavHostController
+    navigateToAuthPage: () -> Unit,
 ) {
     val textCode = remember { mutableStateOf("") }
+    val textPass = remember { mutableStateOf("") }
+    val textRepeatPass = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -150,8 +167,22 @@ fun ForgotPassPage_Code(
                 TextForField(text = "Код")
                 TextBox(text = textCode)
 
+                TextForField(text = "Введите пароль")
+                PassBox(textPass = textPass)
+
+                TextForField(text = "Повторите пароль")
+                PassBox(textPass = textRepeatPass)
+
                 ButtonApp(
-                    text = "Проверить код",
+                    text = "Сменить пароль",
+                    onClick = {
+                        if(textPass.value == textRepeatPass.value) {
+                            thread {
+                                apiClient.changePassword(textCode.value, textPass.value, textUsername.value)
+                            }.join()
+                            navigateToAuthPage()
+                        }
+                    }
                 )
             }
         }
@@ -162,7 +193,6 @@ fun ForgotPassPage_Code(
 @Composable
 fun ForgotPassPage_ChangePass(
     mail: String?,
-//    listUsers: MutableList<User>,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,

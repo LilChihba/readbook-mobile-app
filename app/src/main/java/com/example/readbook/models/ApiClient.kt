@@ -17,21 +17,21 @@ import java.io.OutputStreamWriter
 import java.lang.reflect.Type
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 import java.util.UUID
 
 
 class ApiClient {
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun auth(mail: String, password: String): Any? {
         Log.d("POST", "Getting the authorization token")
-        return parser(postRequest(URL("$BASE_URL/session"), mail, password), "POST", Token::class.java)
+        return parser(postRequest(URL("$BASE_URL/session"), mail = mail, password = password, action = "Auth"), "POST", Token::class.java)
     }
 
     fun registration(regToken: String, username: String, password: String) {
         Log.d("POST", "Registration...")
         val url = URL("$BASE_URL/account")
-        postRequest(url, regToken = regToken, username = username, password = password)
+        postRequest(url, regToken = regToken, username = username, password = password, action = "Registration")
     }
 
     fun getMe(token: Token): Any? {
@@ -44,7 +44,7 @@ class ApiClient {
         return parserImage(URL("$BASE_URL/users/$username/avatar").openConnection() as HttpURLConnection)
     }
 
-    fun getMeEmail(username: String, token: Token): User? {
+    fun getMeEmail(token: Token): User? {
         Log.d("GET", "Getting a user mail")
         var output: String?
         while (getRequest(URL("$BASE_URL/me/email"), token.accessToken).readLine().also { output = it } != null) {
@@ -68,18 +68,33 @@ class ApiClient {
 
     fun getRegToken(mail: String) {
         Log.d("POST", "Gettings the registration token")
-        postRequest(URL("$BASE_URL/registration-token"), mail)
+        postRequest(URL("$BASE_URL/registration-token"), mail = mail, action = "RegistrationToken")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateToken(token: Token): Any? {
         Log.d("POST", "Updating the access token")
-        return parser(postRequest(URL("$BASE_URL/session/access-token"), refreshToken = token.refreshToken), "POST", Token::class.java)
+        return parser(postRequest(URL("$BASE_URL/session/access-token"), refreshToken = token.refreshToken, action = "RefreshToken"), "POST", Token::class.java)
     }
 
     fun checkBuy(bookUuid: UUID, accessToken: String): Int {
         Log.d("HEAD", "Checking whether the book has been purchased")
         return headRequest(URL("$BASE_URL/library/books/$bookUuid"), accessToken)
+    }
+
+    fun getCodeInEmail(mail: String, username: String): Int {
+        Log.d("DELETE", "Getting the code by email for restore password")
+        return deleteRequest(URL("$BASE_URL/users/$username/password"), mail)
+    }
+
+    fun changePassword(code: String, password: String, username: String) {
+        Log.d("POST", "Changing the password")
+        postRequest(URL("$BASE_URL/users/$username/password"), password = password, code = code, action = "ChangePassword")
+    }
+
+    fun searchBooks(text: String): Any? {
+        Log.d("GET", "Searching the book")
+        return parser(getRequest(URL("$BASE_URL/books?title=${URLEncoder.encode(text, "utf-8")}")), "GET", object : TypeToken<List<Book?>?>() {}.type)
     }
 
     private fun headRequest(url: URL, accessToken: String): Int {
@@ -96,7 +111,9 @@ class ApiClient {
 
     private fun postRequest(
         url: URL,
+        action: String = "",
         mail: String = "",
+        code: String = "",
         password: String = "",
         refreshToken: String = "",
         regToken: String = "",
@@ -106,35 +123,33 @@ class ApiClient {
             requestMethod = "POST"
             doOutput = true
             setRequestProperty("Content-Type", "application/json")
-            if(refreshToken != "")
-                setRequestProperty("Authorization", "Bearer $refreshToken")
 
-            if(username != "" && regToken != "" && password != "") {
-                val os = outputStream
-                val osw = OutputStreamWriter(os, "UTF-8")
-                osw.write("{ \"registration_token\": \"$regToken\", \"username\": \"$username\", \"password\": \"$password\"}")
-                osw.flush()
-                osw.close()
-                os.close()
-            }
+            val os = outputStream
+            val osw = OutputStreamWriter(os, "UTF-8")
+            when(action) {
+                "RefreshToken" -> {
+                    setRequestProperty("Authorization", "Bearer $refreshToken")
+                }
 
-            if(mail != "" && password != "") {
-                val os = outputStream
-                val osw = OutputStreamWriter(os, "UTF-8")
-                osw.write("{ \"username\": \"$mail\", \"password\": \"$password\"}")
-                osw.flush()
-                osw.close()
-                os.close()
-            }
+                "ChangePassword" -> {
+                    osw.write("{ \"reset_token\": \"$code\", \"password\": \"$password\" }")
+                }
 
-            if(mail != "" && password == "") {
-                val os = outputStream
-                val osw = OutputStreamWriter(os, "UTF-8")
-                osw.write("{ \"email\": \"$mail\"}")
-                osw.flush()
-                osw.close()
-                os.close()
+                "RegistrationToken" -> {
+                    osw.write("{ \"email\": \"$mail\"}")
+                }
+
+                "Registration" -> {
+                    osw.write("{ \"registration_token\": \"$regToken\", \"username\": \"$username\", \"password\": \"$password\"}")
+                }
+
+                "Auth" -> {
+                    osw.write("{ \"username\": \"$mail\", \"password\": \"$password\"}")
+                }
             }
+            osw.flush()
+            osw.close()
+            os.close()
 
             Log.d("POST", "$url")
             Log.d("POST", "$responseCode $responseMessage")
@@ -156,8 +171,25 @@ class ApiClient {
         }
     }
 
-    private fun deleteRequest() {
-        return
+    private fun deleteRequest(url: URL, mail: String): Int {
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "DELETE"
+            doOutput = true
+
+            setRequestProperty("Content-Type", "application/json")
+
+            val os = outputStream
+            val osw = OutputStreamWriter(os, "UTF-8")
+            osw.write("{ \"email\": \"$mail\"}")
+            osw.flush()
+            osw.close()
+            os.close()
+
+            Log.d("DELETE", "$url")
+            Log.d("DELETE", "$responseCode $responseMessage")
+
+            return responseCode
+        }
     }
 
     private fun putRequest() {

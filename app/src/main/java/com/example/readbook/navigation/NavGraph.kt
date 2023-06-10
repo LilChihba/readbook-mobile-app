@@ -123,7 +123,9 @@ fun NavGraph(
             }
 
             composable(Route.searchPage){
-                SearchPage()
+                SearchPage(
+                    apiClient = apiClient
+                )
             }
 
             composable(route = Route.profilePage) {
@@ -209,18 +211,14 @@ fun NavGraph(
                         route = Route.profilePage,
                         inclusive = false
                     ) },
-                    navController = navController
+                    navController = navController,
+                    apiClient = apiClient
                 )
             }
 
-            composable(
-                route = Route.forgotPassPage_Code,
-                arguments = listOf(navArgument("mail") {
-                    type = NavType.StringType
-                })
-            ) {
+            composable(route = Route.forgotPassPage_Code) {
                 ForgotPassPage_Code(
-                    mail = it.arguments?.getString("mail"),
+                    apiClient = apiClient,
                     snackbarHostState = snackbarHostState,
                     colorSnackBar = colorSnackBar,
                     navigateBack = { navController.popBackStack() },
@@ -228,7 +226,7 @@ fun NavGraph(
                         route = Route.profilePage,
                         inclusive = false
                     ) },
-                    navController = navController
+                    navigateToAuthPage = { navController.navigate(Route.authPage)}
                 )
             }
 

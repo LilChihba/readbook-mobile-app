@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +36,10 @@ import com.example.readbook.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBox(text: MutableState<String>) {
+fun SearchBox(
+    text: MutableState<String>,
+    onSearchClick: () -> Unit = {}
+) {
     var isFocus by remember { mutableStateOf(false) }
 
     BasicTextField(
@@ -46,7 +50,8 @@ fun SearchBox(text: MutableState<String>) {
             fontWeight = FontWeight.Medium,
             color = DarkGray
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = androidx.compose.ui.text.input.ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearchClick() }),
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp, bottom = 15.dp)
