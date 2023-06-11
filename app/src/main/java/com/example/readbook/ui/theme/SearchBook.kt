@@ -16,33 +16,38 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.readbook.models.Book
 import com.example.readbook.models.URL.BASE_URL
+import com.example.readbook.models.toJson
 import java.time.Instant
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchBook(
-    book: Book
+    book: Book,
+    navController: NavHostController
 ) {
+    val bookString = book.toJson()
     Button(
-        onClick = {},
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(0.dp),
-        contentPadding = PaddingValues(0.dp)
+        onClick = { navController.navigate("bookPage/$bookString") },
+        colors = ButtonDefaults.buttonColors(containerColor = Gray),
+        shape = RoundedCornerShape(5.dp),
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier.padding(bottom = 15.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(5.dp)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -64,29 +69,27 @@ fun SearchBook(
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = DarkGray,
-                    modifier = Modifier.padding(start = 10.dp, bottom = 5.dp, top = 2.dp)
+                    modifier = Modifier.padding(start = 10.dp, bottom = 5.dp)
                 )
                 Text(
                     text = book.getAuthorsString(),
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
-                    color = Color.LightGray,
+                    color = DarkGray,
                     modifier = Modifier.padding(start = 10.dp, bottom = 5.dp)
                 )
-                Row {
+                Row(
+                    modifier = Modifier.padding(start = 10.dp)
+                ) {
                     RatingBar(
-                        rating = book.score.toInt(),
-                        modifier = Modifier
-                            .width(26.dp)
-                            .height(26.dp)
-                            .padding(start = 10.dp, bottom = 5.dp)
+                        rating = book.score.toInt()
                     )
                     Text(
                         text = "${book.score}",
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp,
-                        color = Color.LightGray,
-                        modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                        color = DarkGray,
+                        modifier = Modifier.padding(start = 4.dp)
                     )
                 }
             }

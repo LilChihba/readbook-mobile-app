@@ -28,18 +28,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.readbook.models.GenreItem
+import com.example.readbook.models.ApiClient
+import com.example.readbook.models.Book
+import com.example.readbook.models.Genre
+import com.example.readbook.models.toJson
 import java.time.Instant
+import kotlin.concurrent.thread
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GenreCard(
-    genre: GenreItem
+    books: MutableList<Book>,
+    apiClient: ApiClient,
+    genre: Genre,
+    navController: NavHostController
 ) {
+    val genreString = genre.toJson()
     Button(
-        onClick = { /*TODO*/ },
+        onClick = {
+            books.clear()
+            thread {
+                books.addAll((apiClient.getGenreBooks(genre.id) as MutableList<*>).filterIsInstance<Book>())
+            }.join()
+            navController.navigate("genrePage/${genreString}")
+        },
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         shape = ShapeDefaults.Small,
         contentPadding = PaddingValues(0.dp),

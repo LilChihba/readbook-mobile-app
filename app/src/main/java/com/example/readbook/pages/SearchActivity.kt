@@ -23,9 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
-import com.example.readbook.models.GenreItem
+import com.example.readbook.models.Genre
 import com.example.readbook.ui.theme.GenreCard
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.SearchBook
@@ -37,24 +38,18 @@ import kotlin.concurrent.thread
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchPage(
-    apiClient: ApiClient
+    apiClient: ApiClient,
+    navController: NavHostController,
+    genreBooks: MutableList<Book>,
+    listGenres: List<Genre>
 ) {
     val books = remember { mutableListOf<Book>() }
     val textSearch = remember{ mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val listGenres = listOf(
-        GenreItem.Genre1,
-        GenreItem.Genre2,
-        GenreItem.Genre3,
-        GenreItem.Genre4,
-        GenreItem.Genre5,
-        GenreItem.Genre6,
-        GenreItem.Genre7,
-        GenreItem.Genre8,
-    )
     val bool = remember { mutableStateOf(false) }
     val isSearch = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,11 +98,11 @@ fun SearchPage(
                         items(
                             count = listGenres.size,
                             key = {
-                                listGenres[it].title
+                                listGenres[it].id
                             },
                             itemContent = { index ->
                                 val genreItemData = listGenres[index]
-                                GenreCard(genre = genreItemData)
+                                GenreCard(genre = genreItemData, navController = navController, apiClient = apiClient, books = genreBooks)
                             }
                         )
                         books.clear()
@@ -121,7 +116,7 @@ fun SearchPage(
                             },
                             itemContent = { index ->
                                 val bookItemData = books[index]
-                                SearchBook(book = bookItemData)
+                                SearchBook(book = bookItemData, navController = navController)
                             }
                         )
                     }

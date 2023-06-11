@@ -14,4 +14,5 @@ object Route {
     const val libraryPage = "libraryPage"
     const val searchPage = "searchPage"
     const val bookPage = "bookPage/{book}"
+    const val genrePage = "genrePage/{genre}"
 }

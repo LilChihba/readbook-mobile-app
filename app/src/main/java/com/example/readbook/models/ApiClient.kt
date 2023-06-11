@@ -97,6 +97,16 @@ class ApiClient {
         return parser(getRequest(URL("$BASE_URL/books?title=${URLEncoder.encode(text, "utf-8")}")), "GET", object : TypeToken<List<Book?>?>() {}.type)
     }
 
+    fun getGenreBooks(id: Int?): Any? {
+        Log.d("GET", "Searching for a book by genre")
+        return parser(getRequest(URL("$BASE_URL/books?genre=$id")), "GET", object : TypeToken<List<Book?>?>() {}.type)
+    }
+
+    fun changeDataUser(fName: String, sName: String, lName: String, username: String, accessToken: String) {
+        Log.d("PUT", "Changing user data")
+        putRequest(URL("$BASE_URL/users/$username"), fName, sName, lName, username, accessToken)
+    }
+
     private fun headRequest(url: URL, accessToken: String): Int {
         with(url.openConnection() as HttpURLConnection) {
             requestMethod = "HEAD"
@@ -123,14 +133,12 @@ class ApiClient {
             requestMethod = "POST"
             doOutput = true
             setRequestProperty("Content-Type", "application/json")
+            if(action == "RefreshToken")
+                setRequestProperty("Authorization", "Bearer $refreshToken")
 
             val os = outputStream
             val osw = OutputStreamWriter(os, "UTF-8")
             when(action) {
-                "RefreshToken" -> {
-                    setRequestProperty("Authorization", "Bearer $refreshToken")
-                }
-
                 "ChangePassword" -> {
                     osw.write("{ \"reset_token\": \"$code\", \"password\": \"$password\" }")
                 }
@@ -192,8 +200,25 @@ class ApiClient {
         }
     }
 
-    private fun putRequest() {
-        return
+    private fun putRequest(url: URL, fName: String, sName: String, lName: String, username: String, accessToken: String) {
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "PUT"
+            doOutput = true
+
+            setRequestProperty("Accept", "application/json")
+            setRequestProperty("Content-Type", "application/json")
+            setRequestProperty("Authorization", "Bearer $accessToken")
+
+            val os = outputStream
+            val osw = OutputStreamWriter(os, "UTF-8")
+            osw.write("{ \"username\": \"$username\", \"first_name\": \"$fName\", \"middle_name\": \"$sName\", \"last_name\": \"$lName\" }")
+            osw.flush()
+            osw.close()
+            os.close()
+
+            Log.d("PUT", "$url")
+            Log.d("PUT", "$responseCode $responseMessage")
+        }
     }
 
     private fun parser(br: BufferedReader, text: String = "POST", type: Type): Any? {

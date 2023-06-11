@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
+import com.example.readbook.models.Genre
 import com.example.readbook.models.Token
 import com.example.readbook.models.User
 import com.example.readbook.models.fromJson
@@ -27,6 +28,7 @@ import com.example.readbook.pages.CodePage
 import com.example.readbook.pages.ForgotPassPage
 import com.example.readbook.pages.ForgotPassPage_ChangePass
 import com.example.readbook.pages.ForgotPassPage_Code
+import com.example.readbook.pages.GenresPage
 import com.example.readbook.pages.HomePage
 import com.example.readbook.pages.LibraryPage
 import com.example.readbook.pages.ProfileEditPage
@@ -60,6 +62,9 @@ fun NavGraph(
     val snackbarHostState = SnackbarHostState()
     val colorSnackBar = remember { mutableStateOf(DarkGray) }
     val activity = (LocalContext.current as? Activity)
+
+    val listGenres = Genre().getAll()
+    val genreBooks: MutableList<Book> = remember { mutableListOf() }
 
     val token = Token(
         pref!!.getString("accessToken", "").toString(),
@@ -124,8 +129,28 @@ fun NavGraph(
 
             composable(Route.searchPage){
                 SearchPage(
-                    apiClient = apiClient
+                    apiClient = apiClient,
+                    navController = navController,
+                    listGenres = listGenres,
+                    genreBooks = genreBooks
                 )
+            }
+
+            composable(
+                route = Route.genrePage,
+                arguments = listOf(navArgument("genre") {
+                    type = NavType.StringType
+                })
+            ){
+                it.arguments?.getString("genre")?.let { jsonString ->
+                    val genre = jsonString.fromJson(Genre::class.java)
+                    GenresPage(
+                        genre = genre,
+                        navigateBack = { navController.popBackStack() },
+                        books = genreBooks,
+                        navController = navController
+                    )
+                }
             }
 
             composable(route = Route.profilePage) {
@@ -276,7 +301,10 @@ fun NavGraph(
                     navigateBackToProfile = { navController.popBackStack(
                         route = Route.profilePage,
                         inclusive = false
-                    ) }
+                    ) },
+                    user = user,
+                    apiClient = apiClient,
+                    token = token
                 )
             }
         }

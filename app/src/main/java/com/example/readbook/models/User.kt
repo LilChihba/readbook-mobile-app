@@ -30,7 +30,7 @@ data class User(
                 secondName = userJSON.secondName
                 lastName = userJSON.lastName
                 avatar = ApiClient().getMeAvatar(user.username)
-                email = ApiClient().getMeEmail(user.username, token)!!.email
+                email = ApiClient().getMeEmail(token)!!.email
             }
             user
         } catch (e: IOException) {
@@ -44,6 +44,6 @@ data class User(
         secondName = userJSON.secondName
         lastName = userJSON.lastName
         avatar = apiClient.getMeAvatar(this.username)
-        email = apiClient.getMeEmail(this.username, token)!!.email
+        email = apiClient.getMeEmail(token)!!.email
     }
 }

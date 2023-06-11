@@ -43,7 +43,7 @@ fun ButtonBookCategory(
     token: Token,
     navController: NavHostController,
 ) {
-    val bookString = book.toJson()
+    var bookString: String?
     Column(
         modifier = Modifier
             .padding(start = 10.dp, end = 15.dp)
@@ -55,6 +55,7 @@ fun ButtonBookCategory(
                     if(book.isBuyed == null)
                         book.isBuyed = apiClient.checkBuy(book.uuid, accessToken = token.accessToken) == 200
                 }.join()
+                bookString = book.toJson()
                 navController.navigate("bookPage/$bookString")
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
