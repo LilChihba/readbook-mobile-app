@@ -3,7 +3,7 @@ package com.example.readbook.models
 import com.google.gson.Gson
 
 fun <A> String.fromJson(type: Class<A>): A {
-    return Gson().fromJson(this, type)
+    return Gson().fromJson(this.trim(), type)
 }
 
 fun <A> A.toJson(): String? {

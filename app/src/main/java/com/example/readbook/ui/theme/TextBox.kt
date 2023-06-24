@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -30,7 +31,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextBox(text: MutableState<String>) {
+fun TextBox(
+    text: MutableState<String>,
+    placeholder: String = "",
+    keyboardType: KeyboardType
+) {
     var isFocus by remember { mutableStateOf(false) }
 
     BasicTextField(
@@ -41,7 +46,8 @@ fun TextBox(text: MutableState<String>) {
             fontWeight = FontWeight.Medium,
             color = DarkGray
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp, bottom = 15.dp)
@@ -64,6 +70,7 @@ fun TextBox(text: MutableState<String>) {
                 innerTextField = innerTextField,
                 enabled = true,
                 singleLine = false,
+                placeholder = { Text(text = placeholder, fontSize = 12.sp) },
                 visualTransformation = VisualTransformation.None,
                 interactionSource = remember { MutableInteractionSource() },
                 colors = TextFieldDefaults.outlinedTextFieldColors(

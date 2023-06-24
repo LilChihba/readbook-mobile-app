@@ -60,6 +60,7 @@ fun PassBox(textPass: MutableState<String>) {
             color = DarkGray
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp, bottom = 15.dp)

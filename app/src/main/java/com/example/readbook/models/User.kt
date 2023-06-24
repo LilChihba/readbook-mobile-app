@@ -1,7 +1,6 @@
 package com.example.readbook.models
 
 import android.graphics.Bitmap
-import java.io.IOException
 
 data class User(
     var username: String = "Гость",
@@ -9,7 +8,8 @@ data class User(
     var secondName: String = "",
     var lastName: String = "",
     var email: String = "",
-    var avatar: Bitmap? = null
+    var avatar: Bitmap? = null,
+    var moneyRub: Int = 0
 ) {
     fun delete() {
         username = "Гость"
@@ -18,24 +18,7 @@ data class User(
         lastName = ""
         email = ""
         avatar = null
-    }
-
-    fun collectData(token: Token): User? {
-        return try {
-            val userJSON = ApiClient().getMe(token) as User
-            val user = User()
-            with(user) {
-                username = userJSON.username
-                firstName = userJSON.firstName
-                secondName = userJSON.secondName
-                lastName = userJSON.lastName
-                avatar = ApiClient().getMeAvatar(user.username)
-                email = ApiClient().getMeEmail(token)!!.email
-            }
-            user
-        } catch (e: IOException) {
-            null
-        }
+        moneyRub = 0
     }
 
     fun copy(userJSON: User, token: Token, apiClient: ApiClient) {
@@ -45,5 +28,6 @@ data class User(
         lastName = userJSON.lastName
         avatar = apiClient.getMeAvatar(this.username)
         email = apiClient.getMeEmail(token)!!.email
+        moneyRub = userJSON.moneyRub
     }
 }

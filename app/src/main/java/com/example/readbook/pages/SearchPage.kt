@@ -1,8 +1,6 @@
 package com.example.readbook.pages
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,14 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
@@ -31,9 +34,10 @@ import com.example.readbook.ui.theme.GenreCard
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.SearchBook
 import com.example.readbook.ui.theme.SearchBox
+import kotlinx.coroutines.launch
+import java.io.IOException
 import kotlin.concurrent.thread
 
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +45,9 @@ fun SearchPage(
     apiClient: ApiClient,
     navController: NavHostController,
     genreBooks: MutableList<Book>,
-    listGenres: List<Genre>
+    listGenres: List<Genre>,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>,
 ) {
     val books = remember { mutableListOf<Book>() }
     val textSearch = remember{ mutableStateOf("") }
@@ -49,6 +55,7 @@ fun SearchPage(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val bool = remember { mutableStateOf(false) }
     val isSearch = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -77,9 +84,19 @@ fun SearchPage(
                             onSearchClick = {
                                 bool.value = false
                                 thread {
-                                    val booksList = (apiClient.searchBooks(textSearch.value) as List<*>).filterIsInstance<Book>()
-                                    books.clear()
-                                    books.addAll(booksList)
+                                    try {
+                                        val booksList = (apiClient.searchBooks(textSearch.value) as List<*>).filterIsInstance<Book>()
+                                        books.clear()
+                                        books.addAll(booksList)
+                                    } catch (_: IOException) {
+                                        colorSnackBar.value = Color.Red
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                message = "Произошла ошибка! Повторите попытку!",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    }
                                 }.join()
                                 bool.value = true
                                 isSearch.value = true
@@ -102,7 +119,14 @@ fun SearchPage(
                             },
                             itemContent = { index ->
                                 val genreItemData = listGenres[index]
-                                GenreCard(genre = genreItemData, navController = navController, apiClient = apiClient, books = genreBooks)
+                                GenreCard(
+                                    genre = genreItemData,
+                                    navController = navController,
+                                    apiClient = apiClient,
+                                    books = genreBooks,
+                                    snackbarHostState = snackbarHostState,
+                                    colorSnackBar = colorSnackBar
+                                )
                             }
                         )
                         books.clear()

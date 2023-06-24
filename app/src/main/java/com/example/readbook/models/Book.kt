@@ -5,7 +5,6 @@ import com.example.readbook.models.dto.book.GenreDto
 import java.math.BigDecimal
 import java.util.UUID
 
-
 data class Book (
     val uuid: UUID,
     val language: String,
@@ -21,7 +20,8 @@ data class Book (
     val numberOfPages: Int,
     val score: Double,
     val priceRub: BigDecimal,
-    var isBuyed: Boolean? = null
+    var isBuyed: Boolean = false,
+    var reviews: List<Review>? = null
 ) {
     fun getAuthorsString(): String {
         val authorNames: MutableList<String?> = ArrayList()

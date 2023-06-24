@@ -1,8 +1,6 @@
 package com.example.readbook.pages
 
 import android.content.SharedPreferences
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,12 +40,9 @@ import com.example.readbook.models.Token
 import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
 import com.example.readbook.ui.theme.Blue
-import com.example.readbook.ui.theme.Gray
 import com.example.readbook.ui.theme.Milk
-import java.time.Instant
 import kotlin.concurrent.thread
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SettingsPage(
     user: User,
@@ -103,7 +98,7 @@ fun SettingsPage(
             ) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = Gray
+                        containerColor = Color.White
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -139,7 +134,7 @@ fun SettingsPage(
                                         model = ImageRequest.Builder(LocalContext.current)
                                             .data(if(user.avatar?.asImageBitmap() != null) user.avatar else R.drawable.default_avatar)
                                             .crossfade(true)
-                                            .diskCacheKey("avatar_user_${Instant.now()}")
+                                            .diskCacheKey("avatar_user_${user.username}")
                                             .build(),
                                         contentDescription = "Avatar",
                                         contentScale = ContentScale.Crop,
@@ -203,7 +198,7 @@ fun SettingsPage(
 
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = Gray
+                        containerColor = Color.White
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -219,7 +214,7 @@ fun SettingsPage(
                     )
 
                     Text(
-                        text = "Версия 0.1",
+                        text = "Версия 1.0",
                         color = Color.Black,
                         fontSize = 14.sp,
                         modifier = Modifier

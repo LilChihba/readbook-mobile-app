@@ -1,7 +1,5 @@
 package com.example.readbook.pages
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,7 +28,6 @@ import com.example.readbook.ui.theme.Blue
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.SearchBook
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GenresPage(
     genre: Genre,

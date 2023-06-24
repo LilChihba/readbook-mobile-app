@@ -1,7 +1,5 @@
 package com.example.readbook.pages
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,8 +13,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,17 +37,16 @@ import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
 import com.example.readbook.models.Token
 import com.example.readbook.ui.theme.ButtonBook
-import com.example.readbook.ui.theme.Gray
 import com.example.readbook.ui.theme.Milk
-import java.time.Instant
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LibraryPage(
     token: Token,
     apiClient: ApiClient,
     navController: NavHostController,
     listLibraryBooks: MutableList<Book>,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>
 ) {
     val count = remember{ mutableStateOf(0) }
 
@@ -69,7 +68,7 @@ fun LibraryPage(
         )
 
         Card(
-            colors = CardDefaults.cardColors(containerColor = Gray),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 20.dp)
@@ -91,7 +90,9 @@ fun LibraryPage(
                             bookItemData,
                             navController = navController,
                             token = token,
-                            apiClient = apiClient
+                            apiClient = apiClient,
+                            snackbarHostState = snackbarHostState,
+                            colorSnackBar = colorSnackBar
                         )
                         count.value += 1
                     }
@@ -104,7 +105,7 @@ fun LibraryPage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(R.drawable.empty_library)
                     .crossfade(true)
-                    .diskCacheKey("empty_library_${Instant.now()}")
+                    .diskCacheKey("empty_library")
                     .build(),
                 contentDescription = "img",
                 contentScale = ContentScale.Crop,

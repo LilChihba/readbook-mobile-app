@@ -1,7 +1,5 @@
 package com.example.readbook.ui.theme
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +30,6 @@ import com.example.readbook.models.URL.BASE_URL
 import com.example.readbook.models.toJson
 import java.time.Instant
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchBook(
     book: Book,
@@ -39,7 +38,7 @@ fun SearchBook(
     val bookString = book.toJson()
     Button(
         onClick = { navController.navigate("bookPage/$bookString") },
-        colors = ButtonDefaults.buttonColors(containerColor = Gray),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
         shape = RoundedCornerShape(5.dp),
         contentPadding = PaddingValues(0.dp),
         modifier = Modifier.padding(bottom = 15.dp)
@@ -59,6 +58,12 @@ fun SearchBook(
                 contentScale = ContentScale.Crop,
                 filterQuality = FilterQuality.High,
                 modifier = Modifier
+                    .shadow(
+                        2.dp,
+                        RoundedCornerShape(5.dp),
+                        ambientColor = Color.LightGray,
+                        spotColor = Color.LightGray
+                    )
                     .height(140.dp)
                     .width(95.dp)
                     .clip(RoundedCornerShape(5.dp))

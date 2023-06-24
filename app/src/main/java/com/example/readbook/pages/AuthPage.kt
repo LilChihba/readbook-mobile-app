@@ -1,9 +1,7 @@
 package com.example.readbook.pages
 
 import android.content.SharedPreferences
-import android.os.Build
 import android.util.Patterns
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.models.ApiClient
@@ -41,10 +40,10 @@ import com.example.readbook.ui.theme.TextBox
 import com.example.readbook.ui.theme.TextForField
 import com.example.readbook.ui.theme.TopNavigationBar
 import kotlinx.coroutines.launch
+import java.io.IOException
 import kotlin.concurrent.thread
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuthPage(
@@ -96,11 +95,12 @@ fun AuthPage(
                         modifier = Modifier.padding(bottom = 30.dp)
                     )
                 }
+
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ){
                     TextForField(text = "Почта")
-                    TextBox(text = textEmail)
+                    TextBox(text = textEmail, keyboardType = KeyboardType.Email)
 
                     TextForField(text = "Пароль")
                     PassBox(textPass = textPassword)
@@ -108,41 +108,67 @@ fun AuthPage(
                     ButtonApp(
                         text = "Вход",
                         onClick = {
-                            if(Patterns.EMAIL_ADDRESS.matcher(textEmail.value).matches()) {
-                                val th = thread {
-                                    token.copy(apiClient.auth(textEmail.value, textPassword.value) as Token)
-                                    user.copy(apiClient.getMe(token) as User, token, apiClient)
-                                    token.save(pref)
+                            var isSuccess = false
+                            if(textPassword.value != "" || textEmail.value != "") {
+                                if(Patterns.EMAIL_ADDRESS.matcher(textEmail.value).matches()) {
+                                    thread {
+                                        try {
+                                            token.copy(apiClient.auth(textEmail.value, textPassword.value) as Token)
+                                            user.copy(apiClient.getMe(token) as User, token, apiClient)
+                                            token.save(pref)
 
-                                    val getLibraryBooks = apiClient.getLibraryBooks(token)
-                                    val getListLibraryBooks: List<Book>?
-                                    if(getLibraryBooks is List<*>){
-                                        getListLibraryBooks = (getLibraryBooks as List<*>).filterIsInstance<Book>()
-                                        for(i in getListLibraryBooks) {
-                                            mutableListLibraryBooks.add(i)
+                                            val getLibraryBooks = apiClient.getLibraryBooks(token)
+                                            val getListLibraryBooks: List<Book>?
+                                            if(getLibraryBooks is List<*>){
+                                                getListLibraryBooks = (getLibraryBooks as List<*>).filterIsInstance<Book>()
+                                                for(i in getListLibraryBooks) {
+                                                    mutableListLibraryBooks.add(i)
+                                                }
+                                            }
+
+                                            colorSnackBar.value = Color.Green
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "Вы успешно авторизовались!",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
+                                            isSuccess = true
+
+                                        } catch (e: IOException) {
+                                            isSuccess = false
+                                            colorSnackBar.value = Color.Red
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "Произошла ошибка при авторизации!",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
+                                            return@thread
                                         }
-                                    }
-
-                                    colorSnackBar.value = Color.Green
+                                    }.join()
+                                }
+                                else {
+                                    isSuccess = false
+                                    colorSnackBar.value = Color.Red
                                     scope.launch {
                                         snackbarHostState.showSnackbar(
-                                            message = "Вы успешно авторизовались!",
+                                            message = "Введите корректную почту!",
                                             duration = SnackbarDuration.Short
                                         )
                                     }
                                 }
-                                th.join()
-                                navigateBackToProfile()
-                            }
-                            else {
+                            } else {
+                                isSuccess = false
                                 colorSnackBar.value = Color.Red
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
-                                        message = "Введите корректную почту!",
+                                        message = "Все поля должны быть заполнены!",
                                         duration = SnackbarDuration.Short
                                     )
                                 }
                             }
+                            navigateBackToProfile()
                         },
                     )
                     AdditionalButton(

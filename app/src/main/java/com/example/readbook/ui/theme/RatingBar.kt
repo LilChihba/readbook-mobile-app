@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.readbook.R
@@ -18,15 +17,25 @@ fun RatingBar(
 ) {
     Row {
         for(i in 1..5) {
-            Icon(
-                painter = painterResource(id = R.drawable.star),
-                contentDescription = "star",
-                modifier = modifier
-                    .width(16.dp)
-                    .height(16.dp),
-                tint = if(rating < i) Color.LightGray else Blue
-            )
+            if(i <= rating) {
+                Icon(
+                    painter = painterResource(id = R.drawable.star),
+                    contentDescription = "star",
+                    modifier = modifier
+                        .width(16.dp)
+                        .height(16.dp),
+                    tint = Blue
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = R.drawable.star_border),
+                    contentDescription = "star",
+                    modifier = modifier
+                        .width(16.dp)
+                        .height(16.dp),
+                    tint = Blue
+                )
+            }
         }
-
     }
 }

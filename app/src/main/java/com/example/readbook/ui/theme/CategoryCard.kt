@@ -1,7 +1,5 @@
 package com.example.readbook.ui.theme
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
@@ -27,9 +27,7 @@ import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
 import com.example.readbook.models.CardItem
 import com.example.readbook.models.Token
-import java.time.Instant
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CategoryCard(
     apiClient: ApiClient,
@@ -37,6 +35,8 @@ fun CategoryCard(
     card: CardItem,
     navController: NavHostController,
     listBooks: MutableList<Book>?,
+    snackbarHostState: SnackbarHostState,
+    colorSnackBar: MutableState<Color>
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Gray),
@@ -56,13 +56,14 @@ fun CategoryCard(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(card.background)
                         .crossfade(true)
-                        .diskCacheKey("books_images_${Instant.now()}_${card.id}")
+                        .diskCacheKey("books_images_${card.id}")
                         .build(),
                     contentDescription = "background",
                     contentScale = ContentScale.Crop,
                     filterQuality = FilterQuality.High,
                     alpha = 0.6f,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
                 Text(
                     text = card.title,
@@ -81,17 +82,17 @@ fun CategoryCard(
                 if(listBooks != null)
                     LazyRow {
                         items(
-                            count = if(listBooks.size < 5) listBooks.size else 5,
-                            key = {
-                                listBooks[it].uuid
-                            },
+                            count = if(listBooks.size < 10) listBooks.size else 10,
+                            key = { item -> item.hashCode() },
                             itemContent = { index ->
                                 val bookItemData = listBooks[index]
                                 ButtonBookCategory(
                                     book = bookItemData,
                                     navController = navController,
                                     apiClient = apiClient,
-                                    token = token
+                                    token = token,
+                                    snackbarHostState = snackbarHostState,
+                                    colorSnackBar = colorSnackBar,
                                 )
                             }
                         )

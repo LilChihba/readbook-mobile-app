@@ -52,6 +52,7 @@ fun SearchBox(
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = androidx.compose.ui.text.input.ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearchClick() }),
+        singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp, bottom = 15.dp)
