@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.readbook.R
 import com.example.readbook.models.ApiClient
+import com.example.readbook.models.ImageCompressor
 import com.example.readbook.models.Token
 import com.example.readbook.models.User
 import com.example.readbook.ui.theme.AdditionalButton
@@ -61,6 +62,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.regex.Pattern
 import kotlin.concurrent.thread
+
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -130,23 +132,45 @@ fun ProfileEditPage(
 
                         if (Build.VERSION.SDK_INT < 28) {
                             bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                            bitmap.value = ImageCompressor().resize(bitmap.value!!, bitmap.value!!.width / 2, bitmap.value!!.height / 2)
                             user.avatar = bitmap.value
                             image = bitmap.value
                         } else {
                             val source = ImageDecoder.createSource(context.contentResolver, it)
                             bitmap.value = ImageDecoder.decodeBitmap(source)
+                            bitmap.value = ImageCompressor().resize(bitmap.value!!, bitmap.value!!.width / 2, bitmap.value!!.height / 2)
                             user.avatar = bitmap.value
                             image = bitmap.value
                         }
                         thread {
                             try {
-                                apiClient.changeAvatar(image, context = context, accessToken = token.accessToken)
-                                colorSnackBar.value = Color.Green
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = "Аватарка успешно изменена!",
-                                        duration = SnackbarDuration.Short
-                                    )
+                                val response = apiClient.changeAvatar(image, context = context, accessToken = token.accessToken)
+                                if(response == 204) {
+                                    colorSnackBar.value = Color.Green
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Аватарка успешно изменена!",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                                if(response == 401) {
+                                    colorSnackBar.value = Color.Red
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Пользователь не авторизован",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                                if(response == 413) {
+                                    colorSnackBar.value = Color.Red
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Картинка слишком большая, повторите попытку",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
                                 }
                             } catch (e: IOException) {
                                 bitmap.value = defaultImage
@@ -158,7 +182,7 @@ fun ProfileEditPage(
                                     )
                                 }
                             }
-                        }.join()
+                        }
                         imageUri = null
                     }
                     if(bitmap.value != null) {
@@ -219,18 +243,29 @@ fun ProfileEditPage(
                             navigate = {
                                 thread {
                                     try {
-                                        apiClient.changeDataUser(textFName.value, textMName.value, textLName.value, user.username, token.accessToken)
-                                        with(user) {
-                                            firstName = textFName.value
-                                            secondName = textMName.value
-                                            lastName = textLName.value
+                                        val response = apiClient.changeDataUser(textFName.value, textMName.value, textLName.value, user.username, token.accessToken)
+                                        if(response == 204) {
+                                            with(user) {
+                                                firstName = textFName.value
+                                                secondName = textMName.value
+                                                lastName = textLName.value
+                                            }
+                                            colorSnackBar.value = Color.Green
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "Вы успешно изменили ФИО!",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
                                         }
-                                        colorSnackBar.value = Color.Green
-                                        scope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                message = "Вы успешно изменили ФИО!",
-                                                duration = SnackbarDuration.Short
-                                            )
+                                        if(response == 400 || response == 401) {
+                                            colorSnackBar.value = Color.Red
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "Вы ввели неверные данные!",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
                                         }
                                     } catch (e: IOException) {
                                         colorSnackBar.value = Color.Red
@@ -305,17 +340,37 @@ fun ProfileEditPage(
                             modifier = Modifier.padding(bottom = 20.dp),
                             navigate = {
                                 thread {
-                                    try {
                                         if(textNewPass.value != "" || textOldPass.value != "") {
                                             if(textNewPass.value != textOldPass.value) {
                                                 if(Pattern.compile(passwordPattern).matcher(textNewPass.value).matches()) {
-                                                    apiClient.changePasswordUser(textOldPass.value, textNewPass.value, token.accessToken)
-                                                    colorSnackBar.value = Color.Green
-                                                    scope.launch {
-                                                        snackbarHostState.showSnackbar(
-                                                            message = "Вы успешно поменяли пароль!",
-                                                            duration = SnackbarDuration.Short
-                                                        )
+                                                    try {
+                                                        val response = apiClient.changePasswordUser(textOldPass.value, textNewPass.value, token.accessToken)
+                                                        if(response == 204) {
+                                                            colorSnackBar.value = Color.Green
+                                                            scope.launch {
+                                                                snackbarHostState.showSnackbar(
+                                                                    message = "Вы успешно поменяли пароль!",
+                                                                    duration = SnackbarDuration.Short
+                                                                )
+                                                            }
+                                                        }
+                                                        if(response == 400 || response == 401) {
+                                                            colorSnackBar.value = Color.Red
+                                                            scope.launch {
+                                                                snackbarHostState.showSnackbar(
+                                                                    message = "Вы ввели неверные данные!",
+                                                                    duration = SnackbarDuration.Short
+                                                                )
+                                                            }
+                                                        }
+                                                    } catch (e: IOException) {
+                                                        colorSnackBar.value = Color.Red
+                                                        scope.launch {
+                                                            snackbarHostState.showSnackbar(
+                                                                message = "Произошла ошибка при смене пароля! Повторите попытку",
+                                                                duration = SnackbarDuration.Short
+                                                            )
+                                                        }
                                                     }
                                                 } else {
                                                     colorSnackBar.value = Color.Red
@@ -344,15 +399,6 @@ fun ProfileEditPage(
                                                 )
                                             }
                                         }
-                                    } catch (e: IOException) {
-                                        colorSnackBar.value = Color.Red
-                                        scope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                message = "Произошла ошибка при смене пароля! Повторите попытку",
-                                                duration = SnackbarDuration.Short
-                                            )
-                                        }
-                                    }
                                 }.join()
                             }
                         )

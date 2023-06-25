@@ -145,7 +145,8 @@ fun CodePage(
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
     navigateBack: () -> Unit,
-    navigateBackToProfile: () -> Unit
+    navigateBackToProfile: () -> Unit,
+    navigateBackToAuth: () -> Unit
 ) {
     val textCode = remember{ mutableStateOf("") }
     val textPassword = remember{ mutableStateOf("") }
@@ -269,6 +270,15 @@ fun CodePage(
                                                         )
                                                     }
                                                 }
+                                            } else {
+                                                isSuccess = false
+                                                colorSnackBar.value = Color.Red
+                                                scope.launch {
+                                                    snackbarHostState.showSnackbar(
+                                                        message = "Пароли не совпадают",
+                                                        duration = SnackbarDuration.Short
+                                                    )
+                                                }
                                             }
                                         } else {
                                             isSuccess = false
@@ -310,7 +320,7 @@ fun CodePage(
                                         duration = SnackbarDuration.Short
                                     )
                                 }
-                                navigateBackToProfile()
+                                navigateBackToAuth()
                             }
                         },
                     )

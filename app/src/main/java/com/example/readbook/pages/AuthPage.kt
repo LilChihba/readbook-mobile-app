@@ -134,7 +134,6 @@ fun AuthPage(
                                                 )
                                             }
                                             isSuccess = true
-
                                         } catch (e: IOException) {
                                             isSuccess = false
                                             colorSnackBar.value = Color.Red
@@ -168,7 +167,8 @@ fun AuthPage(
                                     )
                                 }
                             }
-                            navigateBackToProfile()
+                            if(isSuccess)
+                                navigateBackToProfile()
                         },
                     )
                     AdditionalButton(

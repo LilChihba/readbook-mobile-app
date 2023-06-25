@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import com.example.readbook.models.ApiClient
 import com.example.readbook.models.Book
 import com.example.readbook.models.Genre
+import com.example.readbook.models.Token
 import com.example.readbook.ui.theme.GenreCard
 import com.example.readbook.ui.theme.Milk
 import com.example.readbook.ui.theme.SearchBook
@@ -48,6 +49,7 @@ fun SearchPage(
     listGenres: List<Genre>,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
+    token: Token
 ) {
     val books = remember { mutableListOf<Book>() }
     val textSearch = remember{ mutableStateOf("") }
@@ -140,7 +142,14 @@ fun SearchPage(
                             },
                             itemContent = { index ->
                                 val bookItemData = books[index]
-                                SearchBook(book = bookItemData, navController = navController)
+                                SearchBook(
+                                    book = bookItemData,
+                                    navController = navController,
+                                    apiClient = apiClient,
+                                    snackbarHostState = snackbarHostState,
+                                    colorSnackBar = colorSnackBar,
+                                    token = token
+                                )
                             }
                         )
                     }

@@ -35,6 +35,8 @@ fun MainScreen(
     user: User,
     colorSnackBar: MutableState<Color>,
     mutableListLibraryBooks: MutableList<Book>,
+    mutableListBooksPopular: MutableList<Book>,
+    mutableListBooksScore: MutableList<Book>,
     listGenres: List<Genre>,
     genreBooks: MutableList<Book>,
     context: Context
@@ -47,7 +49,7 @@ fun MainScreen(
 
     when (navBackStackEntry?.destination?.route) {
         Route.genrePage -> {
-            navBarState.value = true
+            navBarState.value = false
         }
         Route.readPage -> {
             navBarState.value = false
@@ -109,6 +111,8 @@ fun MainScreen(
                 user = user,
                 colorSnackBar = colorSnackBar,
                 mutableListLibraryBooks = mutableListLibraryBooks,
+                mutableListBooksPopular = mutableListBooksPopular,
+                mutableListBooksScore = mutableListBooksScore,
                 listGenres = listGenres,
                 genreBooks = genreBooks,
                 context = context

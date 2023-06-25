@@ -56,6 +56,7 @@ fun ReviewPage(
     rating: Int?,
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>,
+
 ) {
     val textPreview = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()

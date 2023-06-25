@@ -240,6 +240,13 @@ fun ForgotPassPage_Code(
                                     try {
                                         apiClient.changePassword(textCode.value, textPass.value, textUsername.value)
                                         isSuccess = true
+                                        colorSnackBar.value = Color.Green
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                message = "Пароль успешо сброшен",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
                                     } catch (e: IOException) {
                                         isSuccess = false
                                         colorSnackBar.value = Color.Red

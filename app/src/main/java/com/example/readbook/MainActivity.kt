@@ -50,6 +50,8 @@ class MainActivity : ComponentActivity() {
 
                 val apiClient = ApiClient()
                 val mutableListBooksAddedOn: MutableList<Book> = remember { mutableListOf() }
+                val mutableListBooksScore: MutableList<Book> = remember { mutableListOf() }
+                val mutableListBooksPopular: MutableList<Book> = remember { mutableListOf() }
 
                 var getLibraryBooks: Any?
                 var getListLibraryBooks: List<Book>?
@@ -119,11 +121,43 @@ class MainActivity : ComponentActivity() {
                     }
 
                     thTwo = thread {
-
+                        val getBooksScore: Any?
+                        val getListBooksScore: List<Book>?
+                        try {
+                            getBooksScore = apiClient.getBooksScore()
+                            if (getBooksScore is List<*>) {
+                                getListBooksScore = (getBooksScore as List<*>).filterIsInstance<Book>()
+                                for (i in getListBooksScore) {
+                                    mutableListBooksScore.add(i)
+                                }
+                            }
+                        } catch (e: IOException) {
+                            scope.launch {
+                                withContext(Dispatchers.Main) {
+                                    openDialogServer.value = true
+                                }
+                            }
+                        }
                     }
 
                     thThree = thread {
-
+                        val getBooksPopular: Any?
+                        val getListBooksPopular: List<Book>?
+                        try {
+                            getBooksPopular = apiClient.getBooksPopular()
+                            if (getBooksPopular is List<*>) {
+                                getListBooksPopular = (getBooksPopular as List<*>).filterIsInstance<Book>()
+                                for (i in getListBooksPopular) {
+                                    mutableListBooksPopular.add(i)
+                                }
+                            }
+                        } catch (e: IOException) {
+                            scope.launch {
+                                withContext(Dispatchers.Main) {
+                                    openDialogServer.value = true
+                                }
+                            }
+                        }
                     }
 
                     thFour = thread {
@@ -134,7 +168,11 @@ class MainActivity : ComponentActivity() {
                             if (token.isAccessTokenExpired(nowDate)) {
                                 try {
                                     if (!token.isRefreshTokenExpired(nowDate)) {
-                                        token.copy(apiClient.updateToken(token) as Token)
+                                        val request = apiClient.updateToken(token)
+                                        if(request == 401) {
+                                            return@thread
+                                        }
+                                        token.copy(request as Token)
                                         token.save(pref)
                                         user.copy(apiClient.getMe(token) as User, token, apiClient)
                                         getLibraryBooks = apiClient.getLibraryBooks(token)
@@ -170,11 +208,9 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 } catch (_: Throwable) {
-                                    scope.launch {
-                                        withContext(Dispatchers.Main) {
-                                            openDialogServer.value = true
-                                        }
-                                    }
+                                    user.delete()
+                                    token.delete()
+                                    token.save(pref)
                                 }
                             }
                         } else {
@@ -220,6 +256,8 @@ class MainActivity : ComponentActivity() {
                     user,
                     colorSnackBar,
                     mutableListLibraryBooks,
+                    mutableListBooksPopular,
+                    mutableListBooksScore,
                     listGenres,
                     genreBooks,
                     context

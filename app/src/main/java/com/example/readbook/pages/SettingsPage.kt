@@ -214,7 +214,7 @@ fun SettingsPage(
                     )
 
                     Text(
-                        text = "Версия 1.0",
+                        text = "Версия: ${LocalContext.current.packageManager.getPackageInfo(LocalContext.current.packageName, 0).versionName}",
                         color = Color.Black,
                         fontSize = 14.sp,
                         modifier = Modifier

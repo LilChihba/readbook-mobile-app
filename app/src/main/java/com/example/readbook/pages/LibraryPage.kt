@@ -17,6 +17,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,6 +39,9 @@ import com.example.readbook.models.Book
 import com.example.readbook.models.Token
 import com.example.readbook.ui.theme.ButtonBook
 import com.example.readbook.ui.theme.Milk
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlin.concurrent.thread
 
 @Composable
 fun LibraryPage(
@@ -48,80 +52,99 @@ fun LibraryPage(
     snackbarHostState: SnackbarHostState,
     colorSnackBar: MutableState<Color>
 ) {
-    val count = remember{ mutableStateOf(0) }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Milk)
-            .padding(start = 25.dp, top = 30.dp, end = 25.dp)
-    ) {
-        Text(
-            text = "Мои книги",
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            fontSize = 26.sp,
-            modifier = Modifier
-                .padding(bottom = 15.dp)
-                .align(Alignment.Start)
-        )
-
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp)
-                .alpha(if(count.value == 0) 0F else 1F)
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 110.dp),
-                contentPadding = PaddingValues(start = 10.dp, top = 10.dp),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                items(
-                    count = listLibraryBooks.size,
-                    key = {
-                        listLibraryBooks[it].uuid
-                    },
-                    itemContent = { index ->
-                        val bookItemData = listLibraryBooks[index]
-                        ButtonBook(
-                            bookItemData,
-                            navController = navController,
-                            token = token,
-                            apiClient = apiClient,
-                            snackbarHostState = snackbarHostState,
-                            colorSnackBar = colorSnackBar
-                        )
-                        count.value += 1
+    val listLibraryBooksPage = remember { mutableStateOf(listLibraryBooks) }
+    val isRefreshing by remember { mutableStateOf(false) }
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            thread {
+                listLibraryBooksPage.value.clear()
+                val getLibraryBooks = apiClient.getLibraryBooks(token)
+                if (getLibraryBooks is List<*>) {
+                    val getListLibraryBooks = (getLibraryBooks as List<*>).filterIsInstance<Book>()
+                    for (i in getListLibraryBooks) {
+                        listLibraryBooksPage.value.add(i)
                     }
+                }
+            }.join()
+        }
+    ) {
+        val count = remember{ mutableStateOf(0) }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Milk)
+                .padding(start = 25.dp, top = 30.dp, end = 25.dp)
+        ) {
+            Text(
+                text = "Мои книги",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .padding(bottom = 15.dp)
+                    .align(Alignment.Start)
+            )
+
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp)
+                    .alpha(if(count.value == 0) 0F else 1F)
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 110.dp),
+                    contentPadding = PaddingValues(start = 10.dp, top = 10.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    items(
+                        count = listLibraryBooks.size,
+                        key = {
+                            listLibraryBooks[it].uuid
+                        },
+                        itemContent = { index ->
+                            val bookItemData = listLibraryBooks[index]
+                            ButtonBook(
+                                bookItemData,
+                                navController = navController,
+                                token = token,
+                                apiClient = apiClient,
+                                snackbarHostState = snackbarHostState,
+                                colorSnackBar = colorSnackBar
+                            )
+                            count.value += 1
+                        }
+                    )
+                }
+            }
+            if(count.value == 0)
+            {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(R.drawable.empty_library)
+                        .crossfade(true)
+                        .diskCacheKey("empty_library")
+                        .build(),
+                    contentDescription = "img",
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    filterQuality = FilterQuality.High,
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(135.dp)
+                )
+                Text(
+                    text = "У вас нет купленных книг",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(top = 10.dp)
                 )
             }
-        }
-        if(count.value == 0)
-        {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(R.drawable.empty_library)
-                    .crossfade(true)
-                    .diskCacheKey("empty_library")
-                    .build(),
-                contentDescription = "img",
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.Center,
-                filterQuality = FilterQuality.High,
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(135.dp)
-            )
-            Text(
-                text = "У вас нет купленных книг",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Normal,
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 10.dp)
-            )
         }
     }
 }

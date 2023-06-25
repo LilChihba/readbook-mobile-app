@@ -48,6 +48,8 @@ fun NavGraph(
     user: User,
     colorSnackBar: MutableState<Color>,
     mutableListLibraryBooks: MutableList<Book>,
+    mutableListBooksScore: MutableList<Book>,
+    mutableListBooksPopular: MutableList<Book>,
     listGenres: List<Genre>,
     genreBooks: MutableList<Book>,
     context: Context
@@ -58,6 +60,8 @@ fun NavGraph(
                 HomePage(
                     navController = navController,
                     mutableListBooksAddedOn = mutableListBooksAddedOn,
+                    mutableListBooksScore = mutableListBooksScore,
+                    mutableListBooksPopular = mutableListBooksPopular,
                     apiClient = apiClient,
                     token = token,
                     snackbarHostState = snackbarHostState,
@@ -83,7 +87,8 @@ fun NavGraph(
                     listGenres = listGenres,
                     genreBooks = genreBooks,
                     snackbarHostState = snackbarHostState,
-                    colorSnackBar = colorSnackBar
+                    colorSnackBar = colorSnackBar,
+                    token = token
                 )
             }
 
@@ -99,7 +104,11 @@ fun NavGraph(
                         genre = genre,
                         navigateBack = { navController.popBackStack() },
                         books = genreBooks,
-                        navController = navController
+                        navController = navController,
+                        apiClient = apiClient,
+                        snackbarHostState = snackbarHostState,
+                        colorSnackBar = colorSnackBar,
+                        token = token
                     )
                 }
             }
@@ -172,7 +181,11 @@ fun NavGraph(
                     navigateBackToProfile = { navController.popBackStack(
                         route = Route.profilePage,
                         inclusive = false
-                    ) }
+                    ) },
+                    navigateBackToAuth = { navController.popBackStack(
+                        route = Route.authPage,
+                        inclusive = false
+                    ) },
                 )
             }
 

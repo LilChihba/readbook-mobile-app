@@ -66,14 +66,19 @@ class ApiClient {
         return parser(getRequest(URL("$BASE_URL/me/money"), token!!.accessToken), "GET", User::class.java)
     }
 
-    fun buyBook(bookUuid: UUID, token: Token) {
+    fun buyBook(bookUuid: UUID, token: Token): Int {
         Log.d("PUT", "Buying a book")
-        putRequest(URL("$BASE_URL/orders/books/$bookUuid"), accessToken = token.accessToken, action = "BuyBook")
+        return putRequest(URL("$BASE_URL/orders/books/$bookUuid"), accessToken = token.accessToken, action = "BuyBook")
     }
 
     fun getBooks(): Any? {
         Log.d("GET", "Getting a list of books")
         return parser(getRequest(URL("$BASE_URL/books")), "GET", object : TypeToken<List<Book?>?>() {}.type)
+    }
+
+    fun getBook(uuid: UUID): Any? {
+        Log.d("GET", "Getting a book")
+        return parser(getRequest(URL("$BASE_URL/books/$uuid")), "GET", object : TypeToken<Book?>() {}.type)
     }
 
     fun getLibraryBooks(token: Token): Any? {
@@ -116,19 +121,19 @@ class ApiClient {
         return parser(getRequest(URL("$BASE_URL/books?genre=$id")), "GET", object : TypeToken<List<Book?>?>() {}.type)
     }
 
-    fun changeDataUser(fName: String, sName: String, lName: String, username: String, accessToken: String) {
+    fun changeDataUser(fName: String, sName: String, lName: String, username: String, accessToken: String): Int {
         Log.d("PUT", "Changing user data")
-        putRequest(URL("$BASE_URL/me"), fName, sName, lName, username, accessToken = accessToken, action = "ChangeData")
+        return putRequest(URL("$BASE_URL/me"), fName, sName, lName, username, accessToken = accessToken, action = "ChangeData")
     }
 
-    fun changePasswordUser(oldPass: String, newPass: String, accessToken: String) {
+    fun changePasswordUser(oldPass: String, newPass: String, accessToken: String): Int {
         Log.d("PUT", "Changing user password")
-        putRequest(URL("$BASE_URL/me/password"), oldPass = oldPass, newPass = newPass, accessToken = accessToken, action = "ChangePass")
+        return putRequest(URL("$BASE_URL/me/password"), oldPass = oldPass, newPass = newPass, accessToken = accessToken, action = "ChangePass")
     }
 
-    fun changeAvatar(bitmap: Bitmap?, accessToken: String, context: Context?) {
+    fun changeAvatar(bitmap: Bitmap?, accessToken: String, context: Context?): Int {
         Log.d("PUT", "Changing user avatar")
-        putRequest(URL("$BASE_URL/me/avatar"), bitmap = bitmap, accessToken = accessToken, context = context, action = "ChangeAvatar")
+        return putRequest(URL("$BASE_URL/me/avatar"), bitmap = bitmap, accessToken = accessToken, context = context, action = "ChangeAvatar")
     }
 
     fun getReviews(id: UUID): Any? {
@@ -164,6 +169,16 @@ class ApiClient {
     fun getBooksAddedOn(): Any? {
         Log.d("GET", "Getting books by addedOn")
         return parser(getRequest(URL("$BASE_URL/books?sort=addedOn&per_page=10")), text = "GET", type = object : TypeToken<List<Book?>?>() {}.type)
+    }
+
+    fun getBooksScore(): Any? {
+        Log.d("GET", "Getting books by score")
+        return parser(getRequest(URL("$BASE_URL/books?sort=score,desc&per_page=10")), text = "GET", type = object : TypeToken<List<Book?>?>() {}.type)
+    }
+
+    fun getBooksPopular(): Any? {
+        Log.d("GET", "Getting books by popular")
+        return parser(getRequest(URL("$BASE_URL/books?sort=reviewNumber,desc&per_page=10")), text = "GET", type = object : TypeToken<List<Book?>?>() {}.type)
     }
 
     private fun getContentRequest(url: URL, accessToken: String): ByteArrayOutputStream {
@@ -328,7 +343,7 @@ class ApiClient {
         context: Context? = null,
         accessToken: String,
         action: String
-    ) {
+    ): Int {
         with(url.openConnection() as HttpURLConnection) {
             requestMethod = "PUT"
             doOutput = true
@@ -341,7 +356,7 @@ class ApiClient {
             if(action == "ChangeAvatar") {
                 file = File(context!!.cacheDir, "image")
                 val bos = ByteArrayOutputStream()
-                bitmap?.compress(Bitmap.CompressFormat.PNG, 0, bos)
+//                bitmap?.compress(Bitmap.CompressFormat.PNG, 0, bos)
                 bitmapdata = bos.toByteArray()
 
                 val fos = FileOutputStream(file)
@@ -381,6 +396,8 @@ class ApiClient {
 
             Log.d("PUT", "$url")
             Log.d("PUT", "$responseCode $responseMessage")
+
+            return responseCode
         }
     }
 
