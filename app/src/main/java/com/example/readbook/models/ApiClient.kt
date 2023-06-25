@@ -356,7 +356,7 @@ class ApiClient {
             if(action == "ChangeAvatar") {
                 file = File(context!!.cacheDir, "image")
                 val bos = ByteArrayOutputStream()
-//                bitmap?.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                bitmap?.compress(Bitmap.CompressFormat.PNG, 0, bos)
                 bitmapdata = bos.toByteArray()
 
                 val fos = FileOutputStream(file)
